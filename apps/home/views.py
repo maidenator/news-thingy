@@ -10,9 +10,13 @@ def home_view(request):
     subscription, _ = UserSubscription.objects.get_or_create(user=request.user)
     active_category = request.GET.get('category', 'all')
     search_query = request.GET.get('q', '').strip()
+    saved_only = request.GET.get('saved') == '1'
+
     articles = Article.objects.select_related('outlet', 'category', 'summary').all()
     if active_category != 'all':
         articles = articles.filter(category__slug=active_category)
+    if saved_only:
+        articles = articles.filter(bookmarked_by=request.user)
     if search_query:
         articles = articles.filter(
             Q(title__icontains=search_query) |
@@ -21,9 +25,15 @@ def home_view(request):
             Q(summary__tldr__icontains=search_query)
         )
     articles = list(articles)
+    user_bookmarked_ids = set(request.user.bookmarked_articles.values_list('id', flat=True))
+    saved_count = len(user_bookmarked_ids)
+
     return render(request, 'home/home.html', {
         'subscription': subscription,
         'subscribed_outlet_ids': set(subscription.outlets.values_list('id', flat=True)),
+        'user_bookmarked_ids': user_bookmarked_ids,
+        'saved_count': saved_count,
+        'saved_only': saved_only,
         'categories': Category.objects.all(),
         'outlets': Outlet.objects.all(),
         'articles': articles,
@@ -33,6 +43,19 @@ def home_view(request):
         'total_minutes_saved': sum(a.summary.minutes_saved for a in articles if hasattr(a, 'summary')),
         'user_outlets_count': subscription.outlets.count(),
     })
+
+
+@login_required
+def toggle_bookmark_view(request, article_id):
+    if request.method == 'POST':
+        article = get_object_or_404(Article, id=article_id)
+        if article.bookmarked_by.filter(id=request.user.id).exists():
+            article.bookmarked_by.remove(request.user)
+            messages.info(request, f'Removed "{article.title}" from your bookmarks.')
+        else:
+            article.bookmarked_by.add(request.user)
+            messages.success(request, f'Saved "{article.title}" to your bookmarks.')
+    return redirect(request.META.get('HTTP_REFERER', 'home:home'))
 
 
 @login_required

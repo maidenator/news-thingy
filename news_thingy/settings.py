@@ -105,11 +105,17 @@ DATABASES = {
     )
 }
 
-# Use an in-memory SQLite database during test runs for isolation and speed
+# Use an in-memory SQLite database during test runs for isolation and speed,
+# or local SQLite database if USE_SQLITE is set
 if 'test' in sys.argv:
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': ':memory:',
+    }
+elif os.environ.get('USE_SQLITE', '0').lower() in ('1', 'true'):
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 
 

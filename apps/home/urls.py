@@ -2,4 +2,8 @@ from django.urls import path
 from . import views
 
 app_name = 'home'
-urlpatterns = [path('', views.home_view, name='home'), path('outlets/<int:outlet_id>/toggle/', views.toggle_subscription_view, name='toggle_subscription')]
+urlpatterns = [
+    path('', views.home_view, name='home'),
+    path('outlets/<int:outlet_id>/toggle/', views.toggle_subscription_view, name='toggle_subscription'),
+    path('articles/<int:article_id>/bookmark/', views.toggle_bookmark_view, name='toggle_bookmark'),
+]

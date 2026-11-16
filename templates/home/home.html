@@ -37,9 +37,10 @@
 </section>
 
 <nav class="filters">
-    <a href="{% url 'home:home' %}{% if search_query %}?q={{ search_query }}{% endif %}" class="{% if active_category == 'all' %}active{% endif %}">All topics</a>
+    <a href="{% url 'home:home' %}{% if search_query %}?q={{ search_query }}{% endif %}" class="{% if active_category == 'all' and not saved_only %}active{% endif %}">All topics</a>
+    <a href="?saved=1{% if search_query %}&q={{ search_query }}{% endif %}" class="{% if saved_only %}active{% endif %}">★ Saved ({{ saved_count }})</a>
     {% for category in categories %}
-        <a href="?category={{ category.slug }}{% if search_query %}&q={{ search_query }}{% endif %}" class="{% if active_category == category.slug %}active{% endif %}">{{ category.name }}</a>
+        <a href="?category={{ category.slug }}{% if search_query %}&q={{ search_query }}{% endif %}" class="{% if active_category == category.slug and not saved_only %}active{% endif %}">{{ category.name }}</a>
     {% endfor %}
 </nav>
 
@@ -73,7 +74,15 @@
                     {% endfor %}
                 </ul>
             {% endif %}
-            <a href="{{ article.url }}" target="_blank" rel="noopener">Read original reporting →</a>
+            <div class="article-actions">
+                <a href="{{ article.url }}" target="_blank" rel="noopener">Read original reporting →</a>
+                <form method="post" action="{% url 'home:toggle_bookmark' article.id %}" class="bookmark-form">
+                    {% csrf_token %}
+                    <button type="submit" class="bookmark-btn {% if article.id in user_bookmarked_ids %}bookmarked{% endif %}" title="{% if article.id in user_bookmarked_ids %}Remove bookmark{% else %}Bookmark story{% endif %}">
+                        {% if article.id in user_bookmarked_ids %}★ Saved{% else %}☆ Save{% endif %}
+                    </button>
+                </form>
+            </div>
         </article>
     {% empty %}
         <article class="empty">

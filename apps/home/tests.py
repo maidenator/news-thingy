@@ -86,3 +86,25 @@ class HomeSearchAndFilterTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'AI Startup Secures Seed Funding in Manila')
         self.assertNotContains(response, 'Central Bank Keeps Benchmark Rates Unchanged')
+
+    def test_toggle_bookmark_and_saved_stories_filter(self):
+        self.client.force_login(self.user)
+        # Initially not bookmarked
+        self.assertFalse(self.article1.bookmarked_by.filter(id=self.user.id).exists())
+
+        # Toggle bookmark on
+        response = self.client.post(reverse('home:toggle_bookmark', args=[self.article1.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(self.article1.bookmarked_by.filter(id=self.user.id).exists())
+
+        # Check saved filter view
+        saved_view = self.client.get(reverse('home:home'), {'saved': '1'})
+        self.assertEqual(saved_view.status_code, 200)
+        self.assertContains(saved_view, 'AI Startup Secures Seed Funding in Manila')
+        self.assertNotContains(saved_view, 'Central Bank Keeps Benchmark Rates Unchanged')
+
+        # Toggle bookmark off
+        response_off = self.client.post(reverse('home:toggle_bookmark', args=[self.article1.id]))
+        self.assertEqual(response_off.status_code, 302)
+        self.assertFalse(self.article1.bookmarked_by.filter(id=self.user.id).exists())
+

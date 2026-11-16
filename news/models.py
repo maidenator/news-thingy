@@ -41,6 +41,11 @@ class Article(models.Model):
     author = models.CharField(max_length=150, blank=True, default="Editorial Desk")
     published_at = models.DateTimeField()
     original_read_time_minutes = models.PositiveIntegerField(default=5)
+    bookmarked_by = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        related_name='bookmarked_articles'
+    )
 
     class Meta:
         ordering = ['-published_at']
