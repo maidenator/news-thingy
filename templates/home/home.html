@@ -2,10 +2,90 @@
 {% load static %}
 {% block title %}Today’s Briefing{% endblock %}
 {% block content %}
-<section class="home-intro"><img src="{% static 'images/home/news-mark.svg' %}" alt="News Thingy mark"><div><p class="eyebrow">Your daily digest</p><h2>Today’s summaries</h2><p>Original reporting, shortened for a more focused read.</p></div><dl><div><dt>{{ total_articles_count }}</dt><dd>articles</dd></div><div><dt>{{ user_outlets_count }}</dt><dd>sources followed</dd></div></dl></section>
-<nav class="filters"><a href="{% url 'home:home' %}" class="{% if active_category == 'all' %}active{% endif %}">All topics</a>{% for category in categories %}<a href="?category={{ category.slug }}" class="{% if active_category == category.slug %}active{% endif %}">{{ category.name }}</a>{% endfor %}</nav>
-<section class="source-row"><strong>Follow sources</strong>{% for outlet in outlets %}<form method="post" action="{% url 'home:toggle_subscription' outlet.id %}">{% csrf_token %}<button class="{% if outlet.id in subscribed_outlet_ids %}followed{% endif %}" type="submit">{% if outlet.id in subscribed_outlet_ids %}✓{% else %}+{% endif %} {{ outlet.name }}</button></form>{% endfor %}</section>
-<section class="article-grid">{% for article in articles %}<article><p class="meta">{{ article.outlet.badge_label }} · {{ article.category.name }} · {{ article.published_at|timesince }} ago</p><h3>{{ article.title }}</h3><p>{{ article.summary.tldr }}</p>{% if article.summary.key_takeaways %}<ul>{% for takeaway in article.summary.key_takeaways|slice:':2' %}<li>{{ takeaway }}</li>{% endfor %}</ul>{% endif %}<a href="{{ article.url }}" target="_blank" rel="noopener">Read original reporting →</a></article>{% empty %}<article class="empty"><h3>No articles are available yet.</h3><p>Run the seed command to add the curated sample stories.</p></article>{% endfor %}</section>
+<section class="home-intro">
+    <img src="{% static 'images/home/news-mark.svg' %}" alt="News Thingy mark">
+    <div>
+        <p class="eyebrow">Your daily digest</p>
+        <h2>Today’s summaries</h2>
+        <p>Original reporting, shortened for a more focused read.</p>
+    </div>
+    <dl>
+        <div>
+            <dt>{{ total_articles_count }}</dt>
+            <dd>articles</dd>
+        </div>
+        <div>
+            <dt>{{ user_outlets_count }}</dt>
+            <dd>sources followed</dd>
+        </div>
+    </dl>
+</section>
+
+<section class="search-section">
+    <form method="get" action="{% url 'home:home' %}" class="search-form">
+        <div class="search-input-group">
+            <input type="text" name="q" value="{{ search_query }}" placeholder="Search stories, outlets, or topics..." aria-label="Search articles">
+            {% if active_category and active_category != 'all' %}
+                <input type="hidden" name="category" value="{{ active_category }}">
+            {% endif %}
+            <button type="submit" class="search-button">Search</button>
+            {% if search_query %}
+                <a href="{% url 'home:home' %}{% if active_category and active_category != 'all' %}?category={{ active_category }}{% endif %}" class="search-clear">Clear</a>
+            {% endif %}
+        </div>
+    </form>
+</section>
+
+<nav class="filters">
+    <a href="{% url 'home:home' %}{% if search_query %}?q={{ search_query }}{% endif %}" class="{% if active_category == 'all' %}active{% endif %}">All topics</a>
+    {% for category in categories %}
+        <a href="?category={{ category.slug }}{% if search_query %}&q={{ search_query }}{% endif %}" class="{% if active_category == category.slug %}active{% endif %}">{{ category.name }}</a>
+    {% endfor %}
+</nav>
+
+<section class="source-row">
+    <strong>Follow sources</strong>
+    {% for outlet in outlets %}
+        <form method="post" action="{% url 'home:toggle_subscription' outlet.id %}">
+            {% csrf_token %}
+            <button class="{% if outlet.id in subscribed_outlet_ids %}followed{% endif %}" type="submit">
+                {% if outlet.id in subscribed_outlet_ids %}✓{% else %}+{% endif %} {{ outlet.name }}
+            </button>
+        </form>
+    {% endfor %}
+</section>
+
+<section class="article-grid">
+    {% for article in articles %}
+        <article>
+            <p class="meta">
+                {{ article.outlet.badge_label }} · {{ article.category.name }} · {{ article.published_at|timesince }} ago
+                {% if article.summary %}
+                    · <span class="read-badge">{{ article.summary.summary_read_time_seconds }}s summary</span>
+                {% endif %}
+            </p>
+            <h3>{{ article.title }}</h3>
+            <p>{{ article.summary.tldr }}</p>
+            {% if article.summary.key_takeaways %}
+                <ul>
+                    {% for takeaway in article.summary.key_takeaways|slice:':2' %}
+                        <li>{{ takeaway }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <a href="{{ article.url }}" target="_blank" rel="noopener">Read original reporting →</a>
+        </article>
+    {% empty %}
+        <article class="empty">
+            <h3>No articles found.</h3>
+            {% if search_query %}
+                <p>No results matched your search for "{{ search_query }}". Try clearing your search or selecting a different topic.</p>
+            {% else %}
+                <p>Run the seed command to add the curated sample stories.</p>
+            {% endif %}
+        </article>
+    {% endfor %}
+</section>
 {% endblock %}
 {% block extra_head %}{{ block.super }}<link rel="stylesheet" href="{% static 'css/home/home.css' %}">{% endblock %}
 {% block extra_js %}<script src="{% static 'js/home/home.js' %}"></script>{% endblock %}
