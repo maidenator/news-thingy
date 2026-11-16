@@ -1,0 +1,7 @@
+.auth-card h1 { font: 700 2rem Georgia, serif; margin: .15rem 0 .5rem; }
+.auth-card label { display:block; color:#44403c; font:600 .72rem Arial,sans-serif; letter-spacing:.08em; text-transform:uppercase; }
+.auth-card input, .auth-card textarea { display:block; width:100%; margin-top:.4rem; padding:.7rem; border:1px solid #d6d3d1; border-radius:.35rem; font:400 .9rem Arial,sans-serif; }
+.auth-card button, .account-panel button { width:100%; margin-top:1rem; padding:.72rem; background:#1c1917; color:white; border-radius:.35rem; font:600 .78rem Arial,sans-serif; letter-spacing:.06em; text-transform:uppercase; }
+.eyebrow { font:600 .68rem Arial,sans-serif; letter-spacing:.12em; text-transform:uppercase; color:#78716c; }
+.switch { margin-top:1.5rem; text-align:center; font: .85rem Arial,sans-serif; }.switch a { text-decoration:underline; font-weight:700; }
+.dark .auth-card label { color:#d6d3d1; }.dark .auth-card input { background:#0c0a09; border-color:#44403c; color:#fafaf9; }.dark .auth-card button,.dark .account-panel button { background:#fafaf9; color:#1c1917; }

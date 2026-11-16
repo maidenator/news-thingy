@@ -1,0 +1,78 @@
+{% extends 'accounts/auth_base.html' %}
+
+{% block title %}Log In{% endblock %}
+
+{% block auth_content %}
+<div class="bg-white dark:bg-[#121418] border border-stone-200 dark:border-stone-800 rounded-xl p-8 sm:p-9 shadow-sm transition-colors duration-200">
+    
+    <!-- Card Header -->
+    <div class="mb-7 text-left">
+        <h2 class="text-2xl sm:text-3xl font-bold text-stone-950 dark:text-stone-50 font-serif-headline tracking-tight">
+            Log In
+        </h2>
+        <p class="mt-1.5 text-xs text-stone-600 dark:text-stone-400 leading-relaxed font-serif">
+            Sign in with your username and password to view your news summaries.
+        </p>
+    </div>
+
+    <!-- Login Form -->
+    <form method="POST" action="{% url 'accounts:login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" class="space-y-4">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="p-3 rounded-md bg-rose-50 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-800 text-rose-900 dark:text-rose-200 text-xs font-sans-meta">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Username -->
+        <div>
+            <label for="{{ form.username.id_for_label }}" class="block text-xs font-sans-meta uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1.5 font-semibold">
+                Username
+            </label>
+            <div>
+                {{ form.username }}
+            </div>
+            {% if form.username.errors %}
+                <p class="mt-1 text-xs text-rose-700 dark:text-rose-400 font-sans-meta">{{ form.username.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Password -->
+        <div>
+            <div class="flex items-center justify-between mb-1.5">
+                <label for="{{ form.password.id_for_label }}" class="block text-xs font-sans-meta uppercase tracking-wider text-stone-700 dark:text-stone-300 font-semibold">
+                    Password
+                </label>
+            </div>
+            <div>
+                {{ form.password }}
+            </div>
+            {% if form.password.errors %}
+                <p class="mt-1 text-xs text-rose-700 dark:text-rose-400 font-sans-meta">{{ form.password.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- shadcn Primary Action Button -->
+        <div class="pt-3">
+            <button type="submit" class="w-full inline-flex items-center justify-center gap-2 h-10 px-4 rounded-md bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 text-xs font-medium font-sans-meta uppercase tracking-wider transition-colors shadow-xs cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-400">
+                <span>Log In</span>
+                <span>&rarr;</span>
+            </button>
+        </div>
+    </form>
+
+    <!-- Transition to Register -->
+    <div class="mt-7 pt-5 border-t border-stone-200 dark:border-stone-800/80 text-center">
+        <p class="text-xs text-stone-600 dark:text-stone-400">
+            Don't have an account?
+            <a href="{% url 'accounts:register' %}" class="font-semibold text-stone-950 dark:text-stone-100 underline underline-offset-4 decoration-stone-400 dark:decoration-stone-600 hover:decoration-stone-950 dark:hover:decoration-stone-200 transition ml-1">
+                Sign up &rarr;
+            </a>
+        </p>
+    </div>
+
+</div>
+{% endblock %}
