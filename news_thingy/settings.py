@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 from pathlib import Path
 import os
+import sys
 
 import dj_database_url
 from dotenv import load_dotenv
@@ -103,6 +104,13 @@ DATABASES = {
         ssl_require=bool(os.environ.get('DATABASE_URL')),
     )
 }
+
+# Use an in-memory SQLite database during test runs for isolation and speed
+if 'test' in sys.argv:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:',
+    }
 
 
 # Password validation
