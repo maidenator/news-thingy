@@ -1,0 +1,14 @@
+Student Name: ELORDE
+Section: F1
+Project Title: News Thingy - Philippine News Summaries with LLM Assistance
+GitHub Repository URL: https://github.com/maidenator/news-thingy
+
+Development Date: November 16, 2026
+Development Time: 3:00 PM – 6:00 PM
+
+Submitted Evidence:
+1. Application Screenshots
+2. Git Source Code Changes
+3. Git Commit History
+4. GitHub Commit History Screenshots
+5. Baseline Commit Evidence
