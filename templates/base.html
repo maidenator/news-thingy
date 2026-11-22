@@ -135,11 +135,17 @@
                 
                 <!-- Section Links -->
                 <nav class="flex items-center space-x-5 sm:space-x-7 overflow-x-auto py-1 scrollbar-none text-stone-700 dark:text-stone-300">
-                    <a href="{% url 'home:home' %}" class="hover:text-black dark:hover:text-white border-b-2 {% if not request.GET.category and not request.GET.saved and not request.GET.q %}border-stone-950 dark:border-stone-100 text-stone-950 dark:text-stone-100{% else %}border-transparent{% endif %} pb-1 transition">
+                    <a href="{% url 'home:home' %}" class="hover:text-black dark:hover:text-white border-b-2 {% if not request.GET.category and not request.GET.saved and not request.GET.q and request.resolver_match.app_name != 'insights' %}border-stone-950 dark:border-stone-100 text-stone-950 dark:text-stone-100{% else %}border-transparent{% endif %} pb-1 transition">
                         Front Page
                     </a>
                     <a href="{% url 'home:home' %}?saved=1" class="hover:text-black dark:hover:text-white border-b-2 {% if request.GET.saved == '1' %}border-stone-950 dark:border-stone-100 text-stone-950 dark:text-stone-100{% else %}border-transparent{% endif %} pb-1 transition">
                         ★ Saved Stories
+                    </a>
+                    <a href="{% url 'insights:article_index' %}" class="hover:text-black dark:hover:text-white border-b-2 {% if request.resolver_match.url_name == 'article_index' %}border-stone-950 dark:border-stone-100 text-stone-950 dark:text-stone-100{% else %}border-transparent{% endif %} pb-1 transition">
+                        Article Index
+                    </a>
+                    <a href="{% url 'insights:summarized_articles' %}" class="hover:text-black dark:hover:text-white border-b-2 {% if request.resolver_match.url_name == 'summarized_articles' %}border-stone-950 dark:border-stone-100 text-stone-950 dark:text-stone-100{% else %}border-transparent{% endif %} pb-1 transition">
+                        AI Summaries
                     </a>
                     <a href="{% url 'home:home' %}?category=nation-governance" class="hover:text-black dark:hover:text-white border-b-2 {% if request.GET.category == 'nation-governance' %}border-stone-950 dark:border-stone-100 text-stone-950 dark:text-stone-100{% else %}border-transparent{% endif %} pb-1 transition">
                         Nation & Governance

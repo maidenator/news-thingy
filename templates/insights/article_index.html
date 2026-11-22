@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}Article Index{% endblock %}
+{% block content %}
+<section class="mb-6">
+    <p class="font-sans text-xs uppercase tracking-widest text-stone-500 dark:text-stone-400">Database feature · JOIN</p>
+    <div class="flex flex-wrap items-center justify-between gap-3 mt-1">
+        <h2 class="font-serif-headline text-3xl font-bold text-stone-950 dark:text-stone-50">Article Index</h2>
+        {% if generated_sql %}
+        <a href="{% url 'insights:article_index' %}" class="font-sans text-xs font-semibold uppercase tracking-wider text-stone-700 dark:text-stone-300 border-b border-stone-300 dark:border-stone-700 hover:text-stone-950 dark:hover:text-stone-50 transition">Hide generated SQL</a>
+        {% else %}
+        <a href="{% url 'insights:article_index' %}?sql=1" class="font-sans text-xs font-semibold uppercase tracking-wider text-stone-700 dark:text-stone-300 border-b border-stone-300 dark:border-stone-700 hover:text-stone-950 dark:hover:text-stone-50 transition">Show generated SQL</a>
+        {% endif %}
+    </div>
+    <p class="text-sm text-stone-600 dark:text-stone-400 mt-2 max-w-2xl">
+        Every story in one table, joined with the newsroom that published it and the topic category it belongs to.
+    </p>
+</section>
+
+<div class="overflow-x-auto border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950">
+    <table class="min-w-full text-sm font-sans">
+        <thead class="bg-stone-100 dark:bg-stone-900 text-left text-xs uppercase tracking-wider text-stone-600 dark:text-stone-400">
+            <tr>
+                <th class="px-4 py-3 font-semibold">Article</th>
+                <th class="px-4 py-3 font-semibold">Outlet</th>
+                <th class="px-4 py-3 font-semibold">Category</th>
+                <th class="px-4 py-3 font-semibold">Published</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-stone-200 dark:divide-stone-800">
+            {% for article in articles %}
+            <tr class="hover:bg-stone-50 dark:hover:bg-stone-900/60 transition">
+                <td class="px-4 py-3">
+                    <a href="{{ article.url }}" target="_blank" rel="noopener" class="font-serif-headline text-base font-semibold text-stone-900 dark:text-stone-100 hover:underline">
+                        {{ article.title }}
+                    </a>
+                    <p class="text-xs text-stone-500 dark:text-stone-400 mt-0.5">{{ article.author }}</p>
+                </td>
+                <td class="px-4 py-3 whitespace-nowrap text-stone-800 dark:text-stone-200">{{ article.outlet.name }}</td>
+                <td class="px-4 py-3 whitespace-nowrap text-stone-800 dark:text-stone-200">{{ article.category.name }}</td>
+                <td class="px-4 py-3 whitespace-nowrap text-stone-500 dark:text-stone-400">{{ article.published_at|date:"M j, Y · H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="px-4 py-8 text-center text-stone-500 dark:text-stone-400">
+                    No articles yet. Run <code>python manage.py seed_news</code> to add sample stories.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<p class="font-sans text-xs text-stone-500 dark:text-stone-400 mt-3">
+    {{ articles|length }} article{{ articles|length|pluralize }} ·
+    Joined tables: <code>news_article</code> → <code>news_outlet</code> and <code>news_article</code> → <code>news_category</code>
+</p>
+
+{% if generated_sql %}
+<details class="mt-6 border border-stone-300 dark:border-stone-700 bg-stone-50 dark:bg-stone-900/60 p-4" open>
+    <summary class="cursor-pointer font-sans text-xs font-semibold uppercase tracking-wider text-stone-700 dark:text-stone-300">
+        Generated SQL (JOIN)
+    </summary>
+    <pre class="mt-3 overflow-x-auto text-xs leading-relaxed text-stone-800 dark:text-stone-200"><code>{{ generated_sql }}</code></pre>
+</details>
+{% endif %}
+{% endblock %}

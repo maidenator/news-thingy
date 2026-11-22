@@ -23,6 +23,7 @@ urlpatterns = [
     path('register/', include('apps.register.urls')),
     path('profile/', include('apps.profile.urls')),
     path('settings/', include('apps.user_settings.urls')),
+    path('insights/', include('apps.insights.urls')),
     path('', include('apps.home.urls')),
     # Legacy routes retained for existing bookmarks and regression tests.
     path('accounts/', include('accounts.urls')),

@@ -222,6 +222,26 @@ class Command(BaseCommand):
                     "summary_read_time_seconds": 35,
                     "ai_model": "Gemini 1.5 Flash"
                 }
+            },
+            {
+                "outlet": outlets["gma-news"],
+                "category": categories["climate-environment"],
+                "title": "Breaking: Magnitude 6.3 Earthquake Strikes Off Davao Oriental; No Tsunami Threat",
+                "url": "https://www.gmanetwork.com/news/topstories/regions/davao-oriental-earthquake-tsunami-advisory/",
+                "author": "GMA News Online Staff",
+                "published_at": now - timedelta(minutes=15),
+                "original_read_time_minutes": 4,
+                "summary": None
+            },
+            {
+                "outlet": outlets["rappler"],
+                "category": categories["technology-startups"],
+                "title": "Breaking: Undersea Cable Fault Disrupts Internet Services Across Visayas",
+                "url": "https://www.rappler.com/technology/telecoms/undersea-cable-fault-visayas-internet-outage/",
+                "author": "Rappler Tech Desk",
+                "published_at": now - timedelta(minutes=25),
+                "original_read_time_minutes": 3,
+                "summary": None
             }
         ]
 
@@ -235,14 +255,15 @@ class Command(BaseCommand):
                 published_at=adata["published_at"],
                 original_read_time_minutes=adata["original_read_time_minutes"]
             )
-            sdata = adata["summary"]
-            Summary.objects.create(
-                article=art,
-                tldr=sdata["tldr"],
-                key_takeaways=sdata["key_takeaways"],
-                summary_read_time_seconds=sdata["summary_read_time_seconds"],
-                ai_model=sdata["ai_model"]
-            )
+            sdata = adata.get("summary")
+            if sdata:
+                Summary.objects.create(
+                    article=art,
+                    tldr=sdata["tldr"],
+                    key_takeaways=sdata["key_takeaways"],
+                    summary_read_time_seconds=sdata["summary_read_time_seconds"],
+                    ai_model=sdata["ai_model"]
+                )
 
         # Update existing UserSubscriptions so they follow the new Philippine newsrooms
         all_outlets = list(Outlet.objects.all())
