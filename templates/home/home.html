@@ -74,6 +74,11 @@
 <section class="article-grid">
     {% for article in articles %}
         <article class="{% if forloop.first and not search_query %}lead-story{% endif %}{% if article.id in user_read_ids %} is-read{% endif %}">
+            {% if article.image_url %}
+                <a href="{% url 'home:article_detail' article.id %}" class="article-thumb-link">
+                    <img src="{{ article.image_url }}" alt="{{ article.title }}" class="article-thumb" loading="lazy" onerror="this.parentElement.style.display='none'">
+                </a>
+            {% endif %}
             <p class="meta">
                 <span class="outlet-dot" data-outlet="{{ article.outlet.slug }}"></span>{{ article.outlet.badge_label }} · {{ article.category.name }} · {{ article.published_at|timesince }} ago
                 {% if article.summary %}

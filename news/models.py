@@ -38,6 +38,7 @@ class Article(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='articles')
     title = models.CharField(max_length=300)
     url = models.URLField(unique=True, verbose_name="Original Article URL")
+    image_url = models.URLField(max_length=500, blank=True, default="")
     author = models.CharField(max_length=150, blank=True, default="Editorial Desk")
     published_at = models.DateTimeField()
     original_read_time_minutes = models.PositiveIntegerField(default=5)

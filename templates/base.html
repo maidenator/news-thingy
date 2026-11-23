@@ -140,7 +140,7 @@
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs font-semibold font-sans">
                 
                 <!-- Section Links -->
-                <nav class="flex items-center space-x-5 sm:space-x-7 overflow-x-auto py-1 scrollbar-none text-[#6b5e53] dark:text-[#a89d92]">
+                <nav class="flex flex-wrap items-center gap-x-4 sm:gap-x-5 gap-y-1.5 py-1 text-[#6b5e53] dark:text-[#a89d92]">
                     <a href="{% url 'home:home' %}" class="hover:text-[#9f1239] dark:hover:text-[#fda4af] border-b-2 {% if not request.GET.category and not request.GET.saved and not request.GET.q and request.resolver_match.app_name != 'insights' %}border-[#9f1239] dark:border-[#fb7185] text-[#9f1239] dark:text-[#fda4af]{% else %}border-transparent{% endif %} pb-1 transition whitespace-nowrap">
                         Front Page
                     </a>
@@ -196,15 +196,33 @@
         <div class="border-b border-[#e6ddd0] dark:border-[#342c27]"></div>
     </header>
 
-    <!-- Flash Messages -->
+    <!-- Toast Notifications (Bottom-Right Auto-Dismiss) -->
     {% if messages %}
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 w-full">
+        <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2.5 max-w-sm w-[calc(100vw-2.5rem)] pointer-events-none" aria-live="polite">
             {% for message in messages %}
-                <div class="p-3 mb-2 rounded border text-xs flex items-center justify-between font-sans {% if message.tags == 'error' %}bg-rose-50 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800 text-rose-900 dark:text-rose-200{% elif message.tags == 'success' %}bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200{% else %}bg-amber-50 dark:bg-amber-950/30 border-amber-300 dark:border-amber-800 text-amber-900 dark:text-amber-200{% endif %}">
-                    <div>{{ message }}</div>
+                <div class="toast-item pointer-events-auto p-3.5 rounded-lg border shadow-lg text-xs flex items-start justify-between gap-3 font-sans transition-all duration-300 {% if message.tags == 'error' %}bg-rose-50 dark:bg-[#2a1216] border-rose-300 dark:border-rose-800 text-rose-900 dark:text-rose-200{% elif message.tags == 'success' %}bg-emerald-50 dark:bg-[#0d261e] border-emerald-300 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200{% else %}bg-amber-50 dark:bg-[#281e0f] border-amber-300 dark:border-amber-800 text-amber-900 dark:text-amber-200{% endif %}" role="status">
+                    <div class="leading-relaxed">{{ message }}</div>
+                    <button type="button" class="toast-close shrink-0 opacity-60 hover:opacity-100 text-sm leading-none cursor-pointer" aria-label="Dismiss notification">&times;</button>
                 </div>
             {% endfor %}
         </div>
+        <script>
+            (function() {
+                var toasts = document.querySelectorAll('#toast-container .toast-item');
+                toasts.forEach(function(toast, index) {
+                    var dismiss = function() {
+                        toast.style.opacity = '0';
+                        toast.style.transform = 'translateY(10px)';
+                        setTimeout(function() {
+                            if (toast.parentNode) toast.parentNode.removeChild(toast);
+                        }, 300);
+                    };
+                    var btn = toast.querySelector('.toast-close');
+                    if (btn) btn.addEventListener('click', dismiss);
+                    setTimeout(dismiss, 4000 + index * 400);
+                });
+            })();
+        </script>
     {% endif %}
 
     <!-- Main Content Area -->

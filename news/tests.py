@@ -159,3 +159,23 @@ class RssFetcherServiceTests(TestCase):
         created, err = fetch_outlet_articles(self.outlet, limit=3, fetcher=failing_fetch)
         self.assertEqual(created, 0)
         self.assertIn('Network unreachable', err)
+
+    def test_extract_thumbnails_from_rss_and_og_meta(self):
+        from news.services import extract_og_image_from_html, parse_rss_xml
+
+        rss_with_media = b"""<?xml version="1.0" encoding="UTF-8"?>
+        <rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+          <channel>
+            <item>
+              <title>Thumb Story</title>
+              <link>https://example.com/thumb-story</link>
+              <description>Story summary here.</description>
+              <media:content url="https://cdn.example.com/photo.jpg" medium="image" />
+            </item>
+          </channel>
+        </rss>"""
+        items = parse_rss_xml(rss_with_media, limit=3)
+        self.assertEqual(items[0]['image_url'], 'https://cdn.example.com/photo.jpg')
+
+        og_html = '<html><head><meta property="og:image" content="https://cdn.example.com/hero.webp" /></head></html>'
+        self.assertEqual(extract_og_image_from_html(og_html), 'https://cdn.example.com/hero.webp')

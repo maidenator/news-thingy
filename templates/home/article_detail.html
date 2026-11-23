@@ -13,6 +13,12 @@
     <h1>{{ article.title }}</h1>
     <p class="detail-author">By {{ article.author|default:"Editorial Desk" }}</p>
 
+    {% if article.image_url %}
+        <figure class="detail-hero-wrap">
+            <img src="{{ article.image_url }}" alt="{{ article.title }}" class="detail-hero-img" onerror="this.parentElement.style.display='none'">
+        </figure>
+    {% endif %}
+
     {% if article.summary %}
         <div class="time-breakdown">
             <span>Original read: <strong>{{ article.original_read_time_minutes }} min</strong></span>
