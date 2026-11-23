@@ -7,4 +7,5 @@ urlpatterns = [
     path('outlets/<int:outlet_id>/toggle/', views.toggle_subscription_view, name='toggle_subscription'),
     path('articles/<int:article_id>/', views.article_detail_view, name='article_detail'),
     path('articles/<int:article_id>/bookmark/', views.toggle_bookmark_view, name='toggle_bookmark'),
+    path('articles/<int:article_id>/read/', views.toggle_read_view, name='toggle_read'),
 ]

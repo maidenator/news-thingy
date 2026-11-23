@@ -46,6 +46,11 @@ class Article(models.Model):
         blank=True,
         related_name='bookmarked_articles'
     )
+    read_by = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        related_name='read_articles'
+    )
 
     class Meta:
         ordering = ['-published_at']

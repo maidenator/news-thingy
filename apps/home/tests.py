@@ -168,3 +168,24 @@ class HomeSearchAndFilterTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Summary Pending')
 
+    def test_toggle_read_and_unread_filter(self):
+        self.client.force_login(self.user)
+        self.assertFalse(self.article1.read_by.filter(id=self.user.id).exists())
+
+        # Mark article1 as read (follow redirect to consume flash message)
+        res_on = self.client.post(reverse('home:toggle_read', args=[self.article1.id]), follow=True)
+        self.assertEqual(res_on.status_code, 200)
+        self.assertTrue(self.article1.read_by.filter(id=self.user.id).exists())
+
+        # ?unread=1 excludes article1 and keeps article2
+        unread_res = self.client.get(reverse('home:home'), {'unread': '1'})
+        self.assertEqual(unread_res.status_code, 200)
+        self.assertNotContains(unread_res, 'AI Startup Secures Seed Funding in Manila')
+        self.assertContains(unread_res, 'Central Bank Keeps Benchmark Rates Unchanged')
+        self.assertContains(unread_res, 'Unread (1)')
+
+        # Toggle back to unread
+        res_off = self.client.post(reverse('home:toggle_read', args=[self.article1.id]))
+        self.assertEqual(res_off.status_code, 302)
+        self.assertFalse(self.article1.read_by.filter(id=self.user.id).exists())
+

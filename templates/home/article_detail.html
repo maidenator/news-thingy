@@ -45,12 +45,20 @@
 
     <div class="article-actions detail-actions">
         <a href="{{ article.url }}" target="_blank" rel="noopener" class="primary-link">Read full story at {{ article.outlet.name }} →</a>
-        <form method="post" action="{% url 'home:toggle_bookmark' article.id %}" class="bookmark-form">
-            {% csrf_token %}
-            <button type="submit" class="bookmark-btn {% if is_bookmarked %}bookmarked{% endif %}">
-                {% if is_bookmarked %}★ Saved{% else %}☆ Save{% endif %}
-            </button>
-        </form>
+        <div class="article-action-buttons">
+            <form method="post" action="{% url 'home:toggle_read' article.id %}" class="bookmark-form">
+                {% csrf_token %}
+                <button type="submit" class="bookmark-btn {% if is_read %}bookmarked{% endif %}">
+                    {% if is_read %}✓ Read{% else %}Mark read{% endif %}
+                </button>
+            </form>
+            <form method="post" action="{% url 'home:toggle_bookmark' article.id %}" class="bookmark-form">
+                {% csrf_token %}
+                <button type="submit" class="bookmark-btn {% if is_bookmarked %}bookmarked{% endif %}">
+                    {% if is_bookmarked %}★ Saved{% else %}☆ Save{% endif %}
+                </button>
+            </form>
+        </div>
     </div>
 </article>
 
