@@ -85,3 +85,22 @@ class InsightsQueryTests(TestCase):
         self.assertIn('IN (SELECT', sql.upper())
         self.assertIn('news_summary', sql)
         self.assertContains(response, 'Hide generated SQL')
+
+    def test_outlet_breakdown_requires_login(self):
+        response = self.client.get(reverse('insights:outlet_breakdown'))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('login:login'), response.url)
+
+    def test_outlet_breakdown_aggregates_counts_and_sql(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('insights:outlet_breakdown'), {'sql': '1'})
+        self.assertEqual(response.status_code, 200)
+        outlet_row = response.context['outlets'][0]
+        self.assertEqual(outlet_row.article_count, 2)
+        self.assertEqual(outlet_row.summary_count, 1)
+        sql = response.context['generated_sql'].upper()
+        self.assertIn('COUNT(', sql)
+        self.assertIn('AVG(', sql)
+        self.assertIn('GROUP BY', sql)
+        self.assertContains(response, 'Manila Tech Wire')
+        self.assertContains(response, 'Hide generated SQL')

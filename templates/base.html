@@ -147,6 +147,9 @@
                     <a href="{% url 'insights:summarized_articles' %}" class="hover:text-black dark:hover:text-white border-b-2 {% if request.resolver_match.url_name == 'summarized_articles' %}border-stone-950 dark:border-stone-100 text-stone-950 dark:text-stone-100{% else %}border-transparent{% endif %} pb-1 transition">
                         AI Summaries
                     </a>
+                    <a href="{% url 'insights:outlet_breakdown' %}" class="hover:text-black dark:hover:text-white border-b-2 {% if request.resolver_match.url_name == 'outlet_breakdown' %}border-stone-950 dark:border-stone-100 text-stone-950 dark:text-stone-100{% else %}border-transparent{% endif %} pb-1 transition">
+                        Newsroom Stats
+                    </a>
                     <a href="{% url 'home:home' %}?category=nation-governance" class="hover:text-black dark:hover:text-white border-b-2 {% if request.GET.category == 'nation-governance' %}border-stone-950 dark:border-stone-100 text-stone-950 dark:text-stone-100{% else %}border-transparent{% endif %} pb-1 transition">
                         Nation & Governance
                     </a>
