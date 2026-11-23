@@ -10,7 +10,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Outlet)
 class OutletAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'badge_label', 'website_url')
+    list_display = ('name', 'category', 'badge_label', 'website_url', 'rss_feed_url')
     list_filter = ('category',)
     prepopulated_fields = {'slug': ('name',)}
 

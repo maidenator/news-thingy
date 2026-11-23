@@ -99,27 +99,7 @@
                     <p class="lead-summary">Summary pending. Read the original report for full details.</p>
                 {% endif %}
 
-                <div class="article-actions">
-                    <div class="article-links">
-                        <a href="{% url 'home:article_detail' lead_story.id %}">Full briefing</a>
-                        <span aria-hidden="true">·</span>
-                        <a href="{{ lead_story.url }}" target="_blank" rel="noopener">Original →</a>
-                    </div>
-                    <div class="article-action-buttons">
-                        <form method="post" action="{% url 'home:toggle_read' lead_story.id %}" class="bookmark-form">
-                            {% csrf_token %}
-                            <button type="submit" class="status-btn read-btn {% if lead_story.id in user_read_ids %}is-active{% endif %}">
-                                {% if lead_story.id in user_read_ids %}✓ Read{% else %}Mark read{% endif %}
-                            </button>
-                        </form>
-                        <form method="post" action="{% url 'home:toggle_bookmark' lead_story.id %}" class="bookmark-form">
-                            {% csrf_token %}
-                            <button type="submit" class="status-btn save-btn {% if lead_story.id in user_bookmarked_ids %}is-active{% endif %}">
-                                {% if lead_story.id in user_bookmarked_ids %}★ Saved{% else %}☆ Save{% endif %}
-                            </button>
-                        </form>
-                    </div>
-                </div>
+                {% include 'home/_article_actions.html' with article=lead_story %}
             </article>
 
             {% if featured_stories %}
@@ -159,27 +139,7 @@
                             {% else %}
                                 <p>Summary pending. Read the original report for full details.</p>
                             {% endif %}
-                            <div class="article-actions">
-                                <div class="article-links">
-                                    <a href="{% url 'home:article_detail' article.id %}">Full briefing</a>
-                                    <span aria-hidden="true">·</span>
-                                    <a href="{{ article.url }}" target="_blank" rel="noopener">Original →</a>
-                                </div>
-                                <div class="article-action-buttons">
-                                    <form method="post" action="{% url 'home:toggle_read' article.id %}" class="bookmark-form">
-                                        {% csrf_token %}
-                                        <button type="submit" class="status-btn read-btn {% if article.id in user_read_ids %}is-active{% endif %}">
-                                            {% if article.id in user_read_ids %}✓ Read{% else %}Mark read{% endif %}
-                                        </button>
-                                    </form>
-                                    <form method="post" action="{% url 'home:toggle_bookmark' article.id %}" class="bookmark-form">
-                                        {% csrf_token %}
-                                        <button type="submit" class="status-btn save-btn {% if article.id in user_bookmarked_ids %}is-active{% endif %}">
-                                            {% if article.id in user_bookmarked_ids %}★ Saved{% else %}☆ Save{% endif %}
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
+                            {% include 'home/_article_actions.html' with article=article %}
                         </article>
                     {% endfor %}
                 </section>
@@ -206,27 +166,7 @@
                                 {% else %}
                                     <p class="more-excerpt">Summary pending. Read the original report for full details.</p>
                                 {% endif %}
-                                <div class="more-row-footer">
-                                    <div class="article-links">
-                                        <a href="{% url 'home:article_detail' article.id %}">Full briefing</a>
-                                        <span aria-hidden="true">·</span>
-                                        <a href="{{ article.url }}" target="_blank" rel="noopener">Original →</a>
-                                    </div>
-                                    <div class="article-action-buttons">
-                                        <form method="post" action="{% url 'home:toggle_read' article.id %}" class="bookmark-form">
-                                            {% csrf_token %}
-                                            <button type="submit" class="status-btn read-btn {% if article.id in user_read_ids %}is-active{% endif %}">
-                                                {% if article.id in user_read_ids %}✓ Read{% else %}Mark read{% endif %}
-                                            </button>
-                                        </form>
-                                        <form method="post" action="{% url 'home:toggle_bookmark' article.id %}" class="bookmark-form">
-                                            {% csrf_token %}
-                                            <button type="submit" class="status-btn save-btn {% if article.id in user_bookmarked_ids %}is-active{% endif %}">
-                                                {% if article.id in user_bookmarked_ids %}★ Saved{% else %}☆ Save{% endif %}
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
+                                {% include 'home/_article_actions.html' with article=article wrapper_class='more-row-footer' %}
                             </div>
                             {% if article.image_url %}
                                 <a href="{% url 'home:article_detail' article.id %}" class="more-thumb-link">

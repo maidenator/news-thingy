@@ -1,1 +1,29 @@
-{% extends 'base.html' %}{% load static %}{% block title %}Settings{% endblock %}{% block extra_head %}<link rel="stylesheet" href="{% static 'css/user_settings/settings.css' %}">{% endblock %}{% block content %}<section class="account-panel"><p class="eyebrow">Reading preferences</p><h2>Settings</h2><p>Choose how News Thingy supports your daily reading routine.</p><form method="post">{% csrf_token %}<label class="toggle">{{ form.dark_mode }} <span>Use dark mode</span><small>Remember your preferred reading theme.</small></label><label class="toggle">{{ form.email_notifications }} <span>Daily digest emails</span><small>Receive updates when a new briefing is ready.</small></label><button>Save settings</button></form></section><script src="{% static 'js/user_settings/settings.js' %}"></script>{% endblock %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Settings{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/user_settings/settings.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="account-panel">
+  <p class="eyebrow">Reading preferences</p>
+  <h2>Settings</h2>
+  <p>Choose how News Thingy supports your daily reading routine.</p>
+  <form method="post">
+    {% csrf_token %}
+    <label class="toggle">
+      {{ form.dark_mode }} <span>Use dark mode</span>
+      <small>Remember your preferred reading theme.</small>
+    </label>
+    <label class="toggle">
+      {{ form.email_notifications }} <span>Daily digest emails</span>
+      <small>Receive updates when a new briefing is ready.</small>
+    </label>
+    <button>Save settings</button>
+  </form>
+</section>
+<script src="{% static 'js/user_settings/settings.js' %}"></script>
+{% endblock %}

@@ -1,15 +1,28 @@
 {% extends 'accounts/auth_base.html' %}
 {% load static %}
+
 {% block title %}Log In{% endblock %}
-{% block feature_css %}<link rel="stylesheet" href="{% static 'css/login/login.css' %}">{% endblock %}
+
+{% block feature_css %}
+<link rel="stylesheet" href="{% static 'css/login/login.css' %}">
+{% endblock %}
+
 {% block auth_content %}
 <section class="auth-card bg-white dark:bg-[#121418] border border-stone-200 dark:border-stone-800 rounded-xl p-8 sm:p-9 shadow-sm">
-  <p class="eyebrow">Member access</p><h1>Log In</h1><p>Pick up your personalised Philippine news briefing.</p>
-  <form method="post" class="space-y-4" novalidate>{% csrf_token %}{{ form.non_field_errors }}
-    <label>Username{{ form.username }}</label><label>Password{{ form.password }}</label>
+  <p class="eyebrow">Member access</p>
+  <h1>Log In</h1>
+  <p>Pick up your personalised Philippine news briefing.</p>
+  <form method="post" class="space-y-4" novalidate>
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <label>Username{{ form.username }}</label>
+    <label>Password{{ form.password }}</label>
     <button type="submit">Log In <span aria-hidden="true">→</span></button>
   </form>
   <p class="switch">New to News Thingy? <a href="{% url 'register:register' %}">Create an account</a></p>
 </section>
 {% endblock %}
-{% block feature_js %}<script src="{% static 'js/login/login.js' %}"></script>{% endblock %}
+
+{% block feature_js %}
+<script src="{% static 'js/login/login.js' %}"></script>
+{% endblock %}

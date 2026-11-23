@@ -71,6 +71,7 @@ def _score_article(article, subscribed_outlet_ids, now):
 
 
 def _redirect_back(request, fallback):
+    """Redirect to a safe HTTP_REFERER when present, otherwise to fallback."""
     referer = request.META.get('HTTP_REFERER')
     if referer and url_has_allowed_host_and_scheme(
         referer,
@@ -79,6 +80,15 @@ def _redirect_back(request, fallback):
     ):
         return redirect(referer)
     return redirect(fallback)
+
+
+def _toggle_user_relation(relation, user):
+    """Toggle user membership on a ManyToMany relation; return True if added."""
+    if relation.filter(id=user.id).exists():
+        relation.remove(user)
+        return False
+    relation.add(user)
+    return True
 
 
 @login_required
@@ -163,7 +173,7 @@ def home_view(request):
         'search_query': search_query,
         'total_articles_count': len(ranked_articles),
         'total_minutes_saved': sum(a.summary.minutes_saved for a in ranked_articles if hasattr(a, 'summary')),
-        'user_outlets_count': subscription.outlets.count(),
+        'user_outlets_count': len(subscribed_outlet_ids),
     })
 
 
@@ -192,12 +202,10 @@ def article_detail_view(request, article_id):
 def toggle_read_view(request, article_id):
     if request.method == 'POST':
         article = get_object_or_404(Article, id=article_id)
-        if article.read_by.filter(id=request.user.id).exists():
-            article.read_by.remove(request.user)
-            messages.info(request, f'Marked "{article.title}" as unread.')
-        else:
-            article.read_by.add(request.user)
+        if _toggle_user_relation(article.read_by, request.user):
             messages.success(request, f'Marked "{article.title}" as read.')
+        else:
+            messages.info(request, f'Marked "{article.title}" as unread.')
     return _redirect_back(request, 'home:home')
 
 
@@ -205,12 +213,10 @@ def toggle_read_view(request, article_id):
 def toggle_bookmark_view(request, article_id):
     if request.method == 'POST':
         article = get_object_or_404(Article, id=article_id)
-        if article.bookmarked_by.filter(id=request.user.id).exists():
-            article.bookmarked_by.remove(request.user)
-            messages.info(request, f'Removed "{article.title}" from your bookmarks.')
-        else:
-            article.bookmarked_by.add(request.user)
+        if _toggle_user_relation(article.bookmarked_by, request.user):
             messages.success(request, f'Saved "{article.title}" to your bookmarks.')
+        else:
+            messages.info(request, f'Removed "{article.title}" from your bookmarks.')
     return _redirect_back(request, 'home:home')
 
 
@@ -236,7 +242,9 @@ def toggle_subscription_view(request, outlet_id):
         outlet = get_object_or_404(Outlet, id=outlet_id)
         subscription, _ = UserSubscription.objects.get_or_create(user=request.user)
         if subscription.outlets.filter(id=outlet.id).exists():
-            subscription.outlets.remove(outlet); messages.info(request, f'Unfollowed {outlet.name}.')
+            subscription.outlets.remove(outlet)
+            messages.info(request, f'Unfollowed {outlet.name}.')
         else:
-            subscription.outlets.add(outlet); messages.success(request, f'Now following {outlet.name}.')
+            subscription.outlets.add(outlet)
+            messages.success(request, f'Now following {outlet.name}.')
     return _redirect_back(request, 'home:home')

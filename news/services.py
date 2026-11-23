@@ -1,9 +1,9 @@
-from datetime import datetime, timezone as dt_timezone
-from email.utils import parsedate_to_datetime
 import html
 import re
 import urllib.request
 import xml.etree.ElementTree as ET
+from datetime import datetime, timezone as dt_timezone
+from email.utils import parsedate_to_datetime
 
 from django.utils import timezone
 
@@ -30,6 +30,7 @@ CONTENT_NS = '{http://purl.org/rss/1.0/modules/content/}'
 
 
 def _normalize_image_url(url):
+    """Normalize and validate an HTTP/HTTPS image URL within field length limits."""
     if not url:
         return ''
     cleaned = html.unescape(url.strip())
@@ -208,6 +209,7 @@ def build_summary_fields(title, description):
 
 
 def _default_url_fetcher(url, timeout=10):
+    """Fetch raw bytes from a URL using the configured User-Agent header."""
     req = urllib.request.Request(url, headers={'User-Agent': USER_AGENT})
     with urllib.request.urlopen(req, timeout=timeout) as response:
         return response.read()

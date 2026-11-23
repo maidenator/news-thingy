@@ -1,0 +1,21 @@
+<div class="{{ wrapper_class|default:'article-actions' }}">
+    <div class="article-links">
+        <a href="{% url 'home:article_detail' article.id %}">Full briefing</a>
+        <span aria-hidden="true">·</span>
+        <a href="{{ article.url }}" target="_blank" rel="noopener">Original →</a>
+    </div>
+    <div class="article-action-buttons">
+        <form method="post" action="{% url 'home:toggle_read' article.id %}" class="bookmark-form">
+            {% csrf_token %}
+            <button type="submit" class="status-btn read-btn {% if article.id in user_read_ids %}is-active{% endif %}">
+                {% if article.id in user_read_ids %}✓ Read{% else %}Mark read{% endif %}
+            </button>
+        </form>
+        <form method="post" action="{% url 'home:toggle_bookmark' article.id %}" class="bookmark-form">
+            {% csrf_token %}
+            <button type="submit" class="status-btn save-btn {% if article.id in user_bookmarked_ids %}is-active{% endif %}">
+                {% if article.id in user_bookmarked_ids %}★ Saved{% else %}☆ Save{% endif %}
+            </button>
+        </form>
+    </div>
+</div>

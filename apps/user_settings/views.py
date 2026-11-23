@@ -10,6 +10,7 @@ def settings_view(request):
     settings, _ = UserSettings.objects.get_or_create(user=request.user)
     form = UserSettingsForm(request.POST or None, instance=settings)
     if request.method == 'POST' and form.is_valid():
-        form.save(); messages.success(request, 'Your reading preferences have been saved.')
+        form.save()
+        messages.success(request, 'Your reading preferences have been saved.')
         return redirect('user_settings:settings')
     return render(request, 'user_settings/settings.html', {'form': form})

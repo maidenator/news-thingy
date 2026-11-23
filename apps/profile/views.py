@@ -11,7 +11,8 @@ def profile_view(request):
     profile, _ = Profile.objects.get_or_create(user=request.user)
     form = ProfileForm(request.POST or None, instance=profile)
     if request.method == 'POST' and form.is_valid():
-        form.save(); messages.success(request, 'Your profile has been updated.')
+        form.save()
+        messages.success(request, 'Your profile has been updated.')
         return redirect('profile:profile')
 
     read_articles = list(request.user.read_articles.select_related('summary').all())

@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib import messages
+from django.contrib.auth import login as auth_login, logout as auth_logout
+from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
-from .forms import CustomUserCreationForm, CustomLoginForm
+from news.models import Category, Outlet, UserSubscription
+from .forms import CustomLoginForm, CustomUserCreationForm
 
 
 def register_view(request):
@@ -16,11 +17,10 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             # Initialize subscription preferences with all outlets by default
-            from news.models import UserSubscription, Outlet, Category
             subscription, _ = UserSubscription.objects.get_or_create(user=user)
             subscription.outlets.set(Outlet.objects.all())
             subscription.categories.set(Category.objects.all())
-            
+
             # Direct auto-login for immediate onboarding into the briefing
             auth_login(request, user)
             messages.success(

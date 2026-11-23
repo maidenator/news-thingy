@@ -1,6 +1,12 @@
-{% extends 'base.html' %}{% load static %}
+{% extends 'base.html' %}
+{% load static %}
+
 {% block title %}Profile{% endblock %}
-{% block extra_head %}<link rel="stylesheet" href="{% static 'css/profile/profile.css' %}">{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/profile/profile.css' %}">
+{% endblock %}
+
 {% block content %}
 <section class="account-panel">
   <img src="{% static 'images/profile/avatar.svg' %}" alt="">
@@ -10,12 +16,25 @@
     <p>{{ request.user.email }}</p>
   </div>
   <dl class="reader-stats">
-    <div class="stat-read"><dt>{{ stats.stories_read }}</dt><dd>Stories read</dd></div>
-    <div class="stat-saved-time"><dt>{{ stats.minutes_saved }} min</dt><dd>Time saved</dd></div>
-    <div class="stat-bookmarks"><dt>{{ stats.bookmarks }}</dt><dd>Saved stories</dd></div>
-    <div class="stat-outlets"><dt>{{ stats.followed_outlets }}</dt><dd>Followed outlets</dd></div>
+    <div class="stat-read">
+      <dt>{{ stats.stories_read }}</dt>
+      <dd>Stories read</dd>
+    </div>
+    <div class="stat-saved-time">
+      <dt>{{ stats.minutes_saved }} min</dt>
+      <dd>Time saved</dd>
+    </div>
+    <div class="stat-bookmarks">
+      <dt>{{ stats.bookmarks }}</dt>
+      <dd>Saved stories</dd>
+    </div>
+    <div class="stat-outlets">
+      <dt>{{ stats.followed_outlets }}</dt>
+      <dd>Followed outlets</dd>
+    </div>
   </dl>
-  <form method="post">{% csrf_token %}
+  <form method="post">
+    {% csrf_token %}
     <label>Full name{{ form.full_name }}</label>
     <label>About you{{ form.bio }}</label>
     <button>Save profile</button>
