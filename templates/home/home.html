@@ -72,7 +72,7 @@
                     · <span class="read-badge">{{ article.summary.summary_read_time_seconds }}s summary</span>
                 {% endif %}
             </p>
-            <h3>{{ article.title }}</h3>
+            <h3><a href="{% url 'home:article_detail' article.id %}" class="article-title-link">{{ article.title }}</a></h3>
             {% if article.summary %}
                 <p>{{ article.summary.tldr }}</p>
                 {% if article.summary.key_takeaways %}
@@ -86,7 +86,11 @@
                 <p>Summary pending. Read the original report for full details.</p>
             {% endif %}
             <div class="article-actions">
-                <a href="{{ article.url }}" target="_blank" rel="noopener">Read original reporting →</a>
+                <div class="article-links">
+                    <a href="{% url 'home:article_detail' article.id %}">Full briefing</a>
+                    <span aria-hidden="true">·</span>
+                    <a href="{{ article.url }}" target="_blank" rel="noopener">Original →</a>
+                </div>
                 <form method="post" action="{% url 'home:toggle_bookmark' article.id %}" class="bookmark-form">
                     {% csrf_token %}
                     <button type="submit" class="bookmark-btn {% if article.id in user_bookmarked_ids %}bookmarked{% endif %}" title="{% if article.id in user_bookmarked_ids %}Remove bookmark{% else %}Bookmark story{% endif %}">

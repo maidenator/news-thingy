@@ -63,6 +63,25 @@ def home_view(request):
 
 
 @login_required
+def article_detail_view(request, article_id):
+    article = get_object_or_404(
+        Article.objects.select_related('outlet', 'category', 'summary'),
+        id=article_id,
+    )
+    is_bookmarked = article.bookmarked_by.filter(id=request.user.id).exists()
+    related_articles = list(
+        Article.objects.select_related('outlet', 'category', 'summary')
+        .filter(category=article.category)
+        .exclude(id=article.id)[:3]
+    )
+    return render(request, 'home/article_detail.html', {
+        'article': article,
+        'is_bookmarked': is_bookmarked,
+        'related_articles': related_articles,
+    })
+
+
+@login_required
 def toggle_bookmark_view(request, article_id):
     if request.method == 'POST':
         article = get_object_or_404(Article, id=article_id)

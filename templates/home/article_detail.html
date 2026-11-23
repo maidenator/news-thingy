@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ article.title }}{% endblock %}
+{% block content %}
+<div class="detail-back">
+    <a href="{% url 'home:home' %}">← Back to Today’s Briefing</a>
+</div>
+
+<article class="article-detail">
+    <p class="meta">
+        {{ article.outlet.badge_label }} · {{ article.outlet.name }} · {{ article.category.name }} · {{ article.published_at|date:"M j, Y · H:i" }}
+    </p>
+    <h1>{{ article.title }}</h1>
+    <p class="detail-author">By {{ article.author|default:"Editorial Desk" }}</p>
+
+    {% if article.summary %}
+        <div class="time-breakdown">
+            <span>Original read: <strong>{{ article.original_read_time_minutes }} min</strong></span>
+            <span>Summary read: <strong>{{ article.summary.summary_read_time_seconds }}s</strong></span>
+            <span>Saved: <strong>{{ article.summary.minutes_saved }} min</strong></span>
+            <span>Model: <strong>{{ article.summary.ai_model }}</strong></span>
+        </div>
+
+        <section class="detail-section">
+            <h2>Executive Summary</h2>
+            <p class="detail-tldr">{{ article.summary.tldr }}</p>
+        </section>
+
+        {% if article.summary.key_takeaways %}
+            <section class="detail-section">
+                <h2>Key Takeaways</h2>
+                <ul class="takeaway-list">
+                    {% for takeaway in article.summary.key_takeaways %}
+                        <li>{{ takeaway }}</li>
+                    {% endfor %}
+                </ul>
+            </section>
+        {% endif %}
+    {% else %}
+        <section class="detail-section">
+            <h2>Summary Pending</h2>
+            <p class="detail-tldr">An AI briefing for this dispatch is not available yet. You can read the original publisher report below.</p>
+        </section>
+    {% endif %}
+
+    <div class="article-actions detail-actions">
+        <a href="{{ article.url }}" target="_blank" rel="noopener" class="primary-link">Read full story at {{ article.outlet.name }} →</a>
+        <form method="post" action="{% url 'home:toggle_bookmark' article.id %}" class="bookmark-form">
+            {% csrf_token %}
+            <button type="submit" class="bookmark-btn {% if is_bookmarked %}bookmarked{% endif %}">
+                {% if is_bookmarked %}★ Saved{% else %}☆ Save{% endif %}
+            </button>
+        </form>
+    </div>
+</article>
+
+{% if related_articles %}
+<section class="related-section">
+    <h2>More in {{ article.category.name }}</h2>
+    <div class="article-grid">
+        {% for related in related_articles %}
+            <article>
+                <p class="meta">{{ related.outlet.badge_label }} · {{ related.published_at|timesince }} ago</p>
+                <h3><a href="{% url 'home:article_detail' related.id %}" class="article-title-link">{{ related.title }}</a></h3>
+                {% if related.summary %}
+                    <p>{{ related.summary.tldr }}</p>
+                {% else %}
+                    <p>Summary pending.</p>
+                {% endif %}
+            </article>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endblock %}
+{% block extra_head %}{{ block.super }}<link rel="stylesheet" href="{% static 'css/home/home.css' %}">{% endblock %}
+{% block extra_js %}<script src="{% static 'js/home/home.js' %}"></script>{% endblock %}

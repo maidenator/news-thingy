@@ -138,3 +138,33 @@ class HomeSearchAndFilterTests(TestCase):
         self.assertNotContains(filtered_response, 'Central Bank Keeps Benchmark Rates Unchanged')
         self.assertContains(filtered_response, 'Following (1)')
 
+    def test_article_detail_view_renders_full_summary_and_related(self):
+        extra_tech = Article.objects.create(
+            outlet=self.outlet_inq,
+            category=self.category_tech,
+            title='Philippine Cloud Region Launches',
+            url='https://example.com/cloud-region',
+            published_at=timezone.now(),
+        )
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('home:article_detail', args=[self.article1.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'AI Startup Secures Seed Funding in Manila')
+        self.assertContains(response, 'Raised $2M in seed capital')
+        self.assertContains(response, 'Expanding research lab team')
+        self.assertContains(response, 'Gemini 1.5 Flash')
+        self.assertContains(response, extra_tech.title)
+
+    def test_article_detail_handles_missing_summary(self):
+        no_summary_article = Article.objects.create(
+            outlet=self.outlet_inq,
+            category=self.category_tech,
+            title='Unprocessed Dispatch',
+            url='https://example.com/unprocessed',
+            published_at=timezone.now(),
+        )
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('home:article_detail', args=[no_summary_article.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Summary Pending')
+
