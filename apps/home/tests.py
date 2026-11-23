@@ -198,3 +198,36 @@ class HomeSearchAndFilterTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Fetched 3 new stories from 2 newsroom(s).')
 
+    def test_front_page_ranks_substantive_story_as_lead_and_keeps_latest_wire(self):
+        from datetime import timedelta
+
+        # Make article1 richly illustrated, deeper, and bookmarked (older by 2 hours)
+        self.article1.image_url = 'https://cdn.example.com/lead.jpg'
+        self.article1.original_read_time_minutes = 8
+        self.article1.published_at = timezone.now() - timedelta(hours=2)
+        self.article1.save()
+        self.article1.bookmarked_by.add(self.user)
+
+        self.article2.published_at = timezone.now() - timedelta(hours=1)
+        self.article2.save()
+
+        # Newer promotional blurb published just 5 minutes ago
+        promo = Article.objects.create(
+            outlet=self.outlet_bworld,
+            category=self.category_biz,
+            title='Gear up for the holidays: Brand Promo Partner Content',
+            url='https://example.com/holiday-promo',
+            published_at=timezone.now() - timedelta(minutes=5),
+            original_read_time_minutes=2,
+        )
+
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('home:home'))
+        self.assertEqual(response.status_code, 200)
+        # Substantive story wins the Lead Story centerpiece
+        self.assertEqual(response.context['lead_story'].id, self.article1.id)
+        # Chronological Latest Happenings sidebar still puts the newest item first
+        self.assertEqual(response.context['latest_happenings'][0].id, promo.id)
+        self.assertContains(response, 'Latest Happenings')
+        self.assertContains(response, 'Lead Story')
+

@@ -2,51 +2,47 @@
 {% load static %}
 {% block title %}Today’s Briefing{% endblock %}
 {% block content %}
-<section class="home-intro">
-    <img src="{% static 'images/home/news-mark.svg' %}" alt="News Thingy mark">
-    <div>
-        <p class="eyebrow">Your daily digest</p>
-        <h2>Today’s summaries</h2>
-        <p>Original reporting, shortened for a more focused read.</p>
+<section class="briefing-bar">
+    <div class="briefing-heading">
+        <img src="{% static 'images/home/news-mark.svg' %}" alt="News Thingy mark" class="briefing-mark">
+        <div>
+            <p class="eyebrow">Front Page · Ranked by Editorial Impact</p>
+            <h2>Today’s summaries</h2>
+        </div>
+        <div class="briefing-metrics">
+            <span><strong>{{ total_articles_count }}</strong> articles</span>
+            <span aria-hidden="true">·</span>
+            <span><strong>{{ user_outlets_count }}</strong> followed</span>
+        </div>
     </div>
-    <dl>
-        <div>
-            <dt>{{ total_articles_count }}</dt>
-            <dd>articles</dd>
-        </div>
-        <div>
-            <dt>{{ user_outlets_count }}</dt>
-            <dd>sources followed</dd>
-        </div>
-    </dl>
-    <form method="post" action="{% url 'home:fetch_latest' %}" class="fetch-form">
-        {% csrf_token %}
-        <button type="submit" class="search-button fetch-button">↻ Fetch latest</button>
-    </form>
-</section>
 
-<section class="search-section">
-    <form method="get" action="{% url 'home:home' %}" class="search-form">
-        <div class="search-input-group">
-            <input type="text" name="q" value="{{ search_query }}" placeholder="Search stories, outlets, or topics..." aria-label="Search articles">
-            {% if active_category and active_category != 'all' %}
-                <input type="hidden" name="category" value="{{ active_category }}">
-            {% endif %}
-            {% if following_only %}
-                <input type="hidden" name="following" value="1">
-            {% endif %}
-            {% if unread_only %}
-                <input type="hidden" name="unread" value="1">
-            {% endif %}
-            {% if saved_only %}
-                <input type="hidden" name="saved" value="1">
-            {% endif %}
-            <button type="submit" class="search-button">Search</button>
-            {% if search_query %}
-                <a href="{% url 'home:home' %}{% if active_category and active_category != 'all' %}?category={{ active_category }}{% elif following_only %}?following=1{% elif unread_only %}?unread=1{% elif saved_only %}?saved=1{% endif %}" class="search-clear">Clear</a>
-            {% endif %}
-        </div>
-    </form>
+    <div class="briefing-controls">
+        <form method="get" action="{% url 'home:home' %}" class="search-form">
+            <div class="search-input-group">
+                <input type="text" name="q" value="{{ search_query }}" placeholder="Search stories, outlets, or topics..." aria-label="Search articles">
+                {% if active_category and active_category != 'all' %}
+                    <input type="hidden" name="category" value="{{ active_category }}">
+                {% endif %}
+                {% if following_only %}
+                    <input type="hidden" name="following" value="1">
+                {% endif %}
+                {% if unread_only %}
+                    <input type="hidden" name="unread" value="1">
+                {% endif %}
+                {% if saved_only %}
+                    <input type="hidden" name="saved" value="1">
+                {% endif %}
+                <button type="submit" class="search-button">Search</button>
+                {% if search_query %}
+                    <a href="{% url 'home:home' %}{% if active_category and active_category != 'all' %}?category={{ active_category }}{% elif following_only %}?following=1{% elif unread_only %}?unread=1{% elif saved_only %}?saved=1{% endif %}" class="search-clear">Clear</a>
+                {% endif %}
+            </div>
+        </form>
+        <form method="post" action="{% url 'home:fetch_latest' %}" class="fetch-form">
+            {% csrf_token %}
+            <button type="submit" class="search-button fetch-button">↻ Fetch latest</button>
+        </form>
+    </div>
 </section>
 
 <nav class="filters">
@@ -59,78 +55,235 @@
     {% endfor %}
 </nav>
 
-<section class="source-row">
-    <strong>Follow sources</strong>
-    {% for outlet in outlets %}
-        <form method="post" action="{% url 'home:toggle_subscription' outlet.id %}">
-            {% csrf_token %}
-            <button class="{% if outlet.id in subscribed_outlet_ids %}followed{% endif %}" type="submit" data-outlet="{{ outlet.slug }}">
-                <span class="outlet-dot" data-outlet="{{ outlet.slug }}"></span>{% if outlet.id in subscribed_outlet_ids %}✓{% else %}+{% endif %} {{ outlet.name }}
-            </button>
-        </form>
-    {% endfor %}
-</section>
+<div class="front-page-layout">
+    <!-- Left / Main Editorial Column: Biggest News Takes the Most Space -->
+    <div class="editorial-main">
+        {% if lead_story %}
+            <article class="lead-feature-card{% if lead_story.id in user_read_ids %} is-read{% endif %}">
+                <div class="lead-kicker-row">
+                    <span class="lead-badge">Lead Story · {{ lead_story.editorial_reason }}</span>
+                    <p class="meta">
+                        <span class="outlet-dot" data-outlet="{{ lead_story.outlet.slug }}"></span>{{ lead_story.outlet.badge_label }} · {{ lead_story.category.name }} · {{ lead_story.published_at|timesince }} ago
+                        {% if lead_story.summary %}
+                            · <span class="read-badge">{{ lead_story.summary.summary_read_time_seconds }}s summary</span>
+                        {% endif %}
+                    </p>
+                </div>
 
-<section class="article-grid">
-    {% for article in articles %}
-        <article class="{% if forloop.first and not search_query %}lead-story{% endif %}{% if article.id in user_read_ids %} is-read{% endif %}">
-            {% if article.image_url %}
-                <a href="{% url 'home:article_detail' article.id %}" class="article-thumb-link">
-                    <img src="{{ article.image_url }}" alt="{{ article.title }}" class="article-thumb" loading="lazy" onerror="this.parentElement.style.display='none'">
-                </a>
-            {% endif %}
-            <p class="meta">
-                <span class="outlet-dot" data-outlet="{{ article.outlet.slug }}"></span>{{ article.outlet.badge_label }} · {{ article.category.name }} · {{ article.published_at|timesince }} ago
-                {% if article.summary %}
-                    · <span class="read-badge">{{ article.summary.summary_read_time_seconds }}s summary</span>
+                {% if lead_story.image_url %}
+                    <a href="{% url 'home:article_detail' lead_story.id %}" class="lead-hero-link">
+                        <img src="{{ lead_story.image_url }}" alt="{{ lead_story.title }}" class="lead-hero-img" onerror="this.parentElement.style.display='none'">
+                    </a>
                 {% endif %}
-            </p>
-            <h3><a href="{% url 'home:article_detail' article.id %}" class="article-title-link">{{ article.title }}</a></h3>
-            {% if article.summary %}
-                <p>{{ article.summary.tldr }}</p>
-                {% if article.summary.key_takeaways %}
-                    <ul>
-                        {% for takeaway in article.summary.key_takeaways|slice:':2' %}
-                            <li>{{ takeaway }}</li>
-                        {% endfor %}
-                    </ul>
+
+                <h1 class="lead-headline">
+                    <a href="{% url 'home:article_detail' lead_story.id %}" class="article-title-link">{{ lead_story.title }}</a>
+                </h1>
+
+                {% if lead_story.summary %}
+                    <p class="lead-summary">{{ lead_story.summary.tldr }}</p>
+                    {% if lead_story.summary.key_takeaways %}
+                        <ul class="lead-takeaways">
+                            {% for takeaway in lead_story.summary.key_takeaways|slice:':3' %}
+                                <li>{{ takeaway }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% else %}
+                    <p class="lead-summary">Summary pending. Read the original report for full details.</p>
                 {% endif %}
-            {% else %}
-                <p>Summary pending. Read the original report for full details.</p>
+
+                <div class="article-actions">
+                    <div class="article-links">
+                        <a href="{% url 'home:article_detail' lead_story.id %}">Full briefing</a>
+                        <span aria-hidden="true">·</span>
+                        <a href="{{ lead_story.url }}" target="_blank" rel="noopener">Original →</a>
+                    </div>
+                    <div class="article-action-buttons">
+                        <form method="post" action="{% url 'home:toggle_read' lead_story.id %}" class="bookmark-form">
+                            {% csrf_token %}
+                            <button type="submit" class="status-btn read-btn {% if lead_story.id in user_read_ids %}is-active{% endif %}">
+                                {% if lead_story.id in user_read_ids %}✓ Read{% else %}Mark read{% endif %}
+                            </button>
+                        </form>
+                        <form method="post" action="{% url 'home:toggle_bookmark' lead_story.id %}" class="bookmark-form">
+                            {% csrf_token %}
+                            <button type="submit" class="status-btn save-btn {% if lead_story.id in user_bookmarked_ids %}is-active{% endif %}">
+                                {% if lead_story.id in user_bookmarked_ids %}★ Saved{% else %}☆ Save{% endif %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </article>
+
+            {% if featured_stories %}
+                <div class="section-divider">
+                    <span>Key Briefings</span>
+                </div>
+                <section class="article-grid featured-grid">
+                    {% for article in featured_stories %}
+                        <article class="{% if article.id in user_read_ids %}is-read{% endif %}">
+                            {% if article.image_url %}
+                                <a href="{% url 'home:article_detail' article.id %}" class="article-thumb-link">
+                                    <img src="{{ article.image_url }}" alt="{{ article.title }}" class="article-thumb" loading="lazy" onerror="this.parentElement.style.display='none'">
+                                </a>
+                            {% endif %}
+                            <p class="meta">
+                                <span class="outlet-dot" data-outlet="{{ article.outlet.slug }}"></span>{{ article.outlet.badge_label }} · {{ article.category.name }} · {{ article.published_at|timesince }} ago
+                                {% if article.summary %}
+                                    · <span class="read-badge">{{ article.summary.summary_read_time_seconds }}s summary</span>
+                                {% endif %}
+                            </p>
+                            <h3><a href="{% url 'home:article_detail' article.id %}" class="article-title-link">{{ article.title }}</a></h3>
+                            {% if article.summary %}
+                                <p>{{ article.summary.tldr }}</p>
+                                {% if article.summary.key_takeaways %}
+                                    <ul>
+                                        {% for takeaway in article.summary.key_takeaways|slice:':2' %}
+                                            <li>{{ takeaway }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            {% else %}
+                                <p>Summary pending. Read the original report for full details.</p>
+                            {% endif %}
+                            <div class="article-actions">
+                                <div class="article-links">
+                                    <a href="{% url 'home:article_detail' article.id %}">Full briefing</a>
+                                    <span aria-hidden="true">·</span>
+                                    <a href="{{ article.url }}" target="_blank" rel="noopener">Original →</a>
+                                </div>
+                                <div class="article-action-buttons">
+                                    <form method="post" action="{% url 'home:toggle_read' article.id %}" class="bookmark-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="status-btn read-btn {% if article.id in user_read_ids %}is-active{% endif %}">
+                                            {% if article.id in user_read_ids %}✓ Read{% else %}Mark read{% endif %}
+                                        </button>
+                                    </form>
+                                    <form method="post" action="{% url 'home:toggle_bookmark' article.id %}" class="bookmark-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="status-btn save-btn {% if article.id in user_bookmarked_ids %}is-active{% endif %}">
+                                            {% if article.id in user_bookmarked_ids %}★ Saved{% else %}☆ Save{% endif %}
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </section>
             {% endif %}
-            <div class="article-actions">
-                <div class="article-links">
-                    <a href="{% url 'home:article_detail' article.id %}">Full briefing</a>
-                    <span aria-hidden="true">·</span>
-                    <a href="{{ article.url }}" target="_blank" rel="noopener">Original →</a>
+
+            {% if more_stories %}
+                <div class="section-divider">
+                    <span>More from Today’s Edition</span>
                 </div>
-                <div class="article-action-buttons">
-                    <form method="post" action="{% url 'home:toggle_read' article.id %}" class="bookmark-form">
-                        {% csrf_token %}
-                        <button type="submit" class="status-btn read-btn {% if article.id in user_read_ids %}is-active{% endif %}" title="{% if article.id in user_read_ids %}Mark unread{% else %}Mark as read{% endif %}">
-                            {% if article.id in user_read_ids %}✓ Read{% else %}Mark read{% endif %}
-                        </button>
-                    </form>
-                    <form method="post" action="{% url 'home:toggle_bookmark' article.id %}" class="bookmark-form">
-                        {% csrf_token %}
-                        <button type="submit" class="status-btn save-btn {% if article.id in user_bookmarked_ids %}is-active{% endif %}" title="{% if article.id in user_bookmarked_ids %}Remove bookmark{% else %}Bookmark story{% endif %}">
-                            {% if article.id in user_bookmarked_ids %}★ Saved{% else %}☆ Save{% endif %}
-                        </button>
-                    </form>
+                <section class="more-list">
+                    {% for article in more_stories %}
+                        <article class="more-row{% if article.id in user_read_ids %} is-read{% endif %}">
+                            <div class="more-row-body">
+                                <p class="meta">
+                                    <span class="outlet-dot" data-outlet="{{ article.outlet.slug }}"></span>{{ article.outlet.badge_label }} · {{ article.category.name }} · {{ article.published_at|timesince }} ago
+                                </p>
+                                <h3><a href="{% url 'home:article_detail' article.id %}" class="article-title-link">{{ article.title }}</a></h3>
+                                {% if article.summary %}
+                                    <p class="more-excerpt">{{ article.summary.tldr }}</p>
+                                {% else %}
+                                    <p class="more-excerpt">Summary pending. Read the original report for full details.</p>
+                                {% endif %}
+                                <div class="more-row-footer">
+                                    <div class="article-links">
+                                        <a href="{% url 'home:article_detail' article.id %}">Full briefing</a>
+                                        <span aria-hidden="true">·</span>
+                                        <a href="{{ article.url }}" target="_blank" rel="noopener">Original →</a>
+                                    </div>
+                                    <div class="article-action-buttons">
+                                        <form method="post" action="{% url 'home:toggle_read' article.id %}" class="bookmark-form">
+                                            {% csrf_token %}
+                                            <button type="submit" class="status-btn read-btn {% if article.id in user_read_ids %}is-active{% endif %}">
+                                                {% if article.id in user_read_ids %}✓ Read{% else %}Mark read{% endif %}
+                                            </button>
+                                        </form>
+                                        <form method="post" action="{% url 'home:toggle_bookmark' article.id %}" class="bookmark-form">
+                                            {% csrf_token %}
+                                            <button type="submit" class="status-btn save-btn {% if article.id in user_bookmarked_ids %}is-active{% endif %}">
+                                                {% if article.id in user_bookmarked_ids %}★ Saved{% else %}☆ Save{% endif %}
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if article.image_url %}
+                                <a href="{% url 'home:article_detail' article.id %}" class="more-thumb-link">
+                                    <img src="{{ article.image_url }}" alt="{{ article.title }}" class="more-thumb" loading="lazy" onerror="this.parentElement.style.display='none'">
+                                </a>
+                            {% endif %}
+                        </article>
+                    {% endfor %}
+                </section>
+            {% endif %}
+        {% else %}
+            <article class="empty lead-feature-card">
+                <h3>No articles found.</h3>
+                {% if search_query %}
+                    <p>No results matched your search for "{{ search_query }}". Try clearing your search or selecting a different topic.</p>
+                {% elif following_only %}
+                    <p>You aren’t following any outlets with matching stories yet. Follow a newsroom in the sidebar to personalize this feed.</p>
+                {% else %}
+                    <p>Run the seed command or click <strong>Fetch latest</strong> to load curated stories.</p>
+                {% endif %}
+            </article>
+        {% endif %}
+    </div>
+
+    <!-- Right Sidebar: Chronological Latest Happenings Wire + Follow Newsrooms -->
+    <aside class="editorial-sidebar" aria-label="Latest Happenings and Newsrooms">
+        <section class="wire-panel">
+            <div class="wire-header">
+                <div class="wire-title-group">
+                    <span class="live-dot" aria-hidden="true"></span>
+                    <h2>Latest Happenings</h2>
                 </div>
+                <span class="wire-subtitle">{% if is_filtered %}In this view{% else %}Live Wire{% endif %}</span>
             </div>
-        </article>
-    {% empty %}
-        <article class="empty">
-            <h3>No articles found.</h3>
-            {% if search_query %}
-                <p>No results matched your search for "{{ search_query }}". Try clearing your search or selecting a different topic.</p>
-            {% else %}
-                <p>Run the seed command to add the curated sample stories.</p>
-            {% endif %}
-        </article>
-    {% endfor %}
-</section>
+
+            <ol class="wire-list">
+                {% for item in latest_happenings %}
+                    <li class="wire-item{% if item.id in user_read_ids %} is-read{% endif %}">
+                        <div class="wire-item-body">
+                            <p class="wire-meta">
+                                <span class="wire-time">{{ item.published_at|timesince }} ago</span>
+                                <span aria-hidden="true">·</span>
+                                <span class="outlet-dot" data-outlet="{{ item.outlet.slug }}"></span>{{ item.outlet.badge_label }}
+                            </p>
+                            <a href="{% url 'home:article_detail' item.id %}" class="wire-headline">{{ item.title }}</a>
+                        </div>
+                        {% if item.image_url %}
+                            <a href="{% url 'home:article_detail' item.id %}" class="wire-thumb-link">
+                                <img src="{{ item.image_url }}" alt="" class="wire-thumb" loading="lazy" onerror="this.parentElement.style.display='none'">
+                            </a>
+                        {% endif %}
+                    </li>
+                {% empty %}
+                    <li class="wire-empty">No recent dispatches in this view.</li>
+                {% endfor %}
+            </ol>
+        </section>
+
+        <section class="source-row sidebar-sources">
+            <strong>Follow sources</strong>
+            <div class="sidebar-source-pills">
+                {% for outlet in outlets %}
+                    <form method="post" action="{% url 'home:toggle_subscription' outlet.id %}">
+                        {% csrf_token %}
+                        <button class="{% if outlet.id in subscribed_outlet_ids %}followed{% endif %}" type="submit" data-outlet="{{ outlet.slug }}">
+                            <span class="outlet-dot" data-outlet="{{ outlet.slug }}"></span>{% if outlet.id in subscribed_outlet_ids %}✓{% else %}+{% endif %} {{ outlet.name }}
+                        </button>
+                    </form>
+                {% endfor %}
+            </div>
+        </section>
+    </aside>
+</div>
 {% endblock %}
 {% block extra_head %}{{ block.super }}<link rel="stylesheet" href="{% static 'css/home/home.css' %}">{% endblock %}
 {% block extra_js %}<script src="{% static 'js/home/home.js' %}"></script>{% endblock %}
