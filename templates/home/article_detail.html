@@ -8,7 +8,7 @@
 
 <article class="article-detail">
     <p class="meta">
-        {{ article.outlet.badge_label }} · {{ article.outlet.name }} · {{ article.category.name }} · {{ article.published_at|date:"M j, Y · H:i" }}
+        <span class="outlet-dot" data-outlet="{{ article.outlet.slug }}"></span>{{ article.outlet.badge_label }} · {{ article.outlet.name }} · {{ article.category.name }} · {{ article.published_at|date:"M j, Y · H:i" }}
     </p>
     <h1>{{ article.title }}</h1>
     <p class="detail-author">By {{ article.author|default:"Editorial Desk" }}</p>
@@ -17,11 +17,11 @@
         <div class="time-breakdown">
             <span>Original read: <strong>{{ article.original_read_time_minutes }} min</strong></span>
             <span>Summary read: <strong>{{ article.summary.summary_read_time_seconds }}s</strong></span>
-            <span>Saved: <strong>{{ article.summary.minutes_saved }} min</strong></span>
+            <span class="saved-pill">Saved: <strong>{{ article.summary.minutes_saved }} min</strong></span>
             <span>Model: <strong>{{ article.summary.ai_model }}</strong></span>
         </div>
 
-        <section class="detail-section">
+        <section class="detail-section summary-callout">
             <h2>Executive Summary</h2>
             <p class="detail-tldr">{{ article.summary.tldr }}</p>
         </section>
@@ -48,13 +48,13 @@
         <div class="article-action-buttons">
             <form method="post" action="{% url 'home:toggle_read' article.id %}" class="bookmark-form">
                 {% csrf_token %}
-                <button type="submit" class="bookmark-btn {% if is_read %}bookmarked{% endif %}">
+                <button type="submit" class="status-btn read-btn {% if is_read %}is-active{% endif %}">
                     {% if is_read %}✓ Read{% else %}Mark read{% endif %}
                 </button>
             </form>
             <form method="post" action="{% url 'home:toggle_bookmark' article.id %}" class="bookmark-form">
                 {% csrf_token %}
-                <button type="submit" class="bookmark-btn {% if is_bookmarked %}bookmarked{% endif %}">
+                <button type="submit" class="status-btn save-btn {% if is_bookmarked %}is-active{% endif %}">
                     {% if is_bookmarked %}★ Saved{% else %}☆ Save{% endif %}
                 </button>
             </form>
@@ -68,7 +68,7 @@
     <div class="article-grid">
         {% for related in related_articles %}
             <article>
-                <p class="meta">{{ related.outlet.badge_label }} · {{ related.published_at|timesince }} ago</p>
+                <p class="meta"><span class="outlet-dot" data-outlet="{{ related.outlet.slug }}"></span>{{ related.outlet.badge_label }} · {{ related.published_at|timesince }} ago</p>
                 <h3><a href="{% url 'home:article_detail' related.id %}" class="article-title-link">{{ related.title }}</a></h3>
                 {% if related.summary %}
                     <p>{{ related.summary.tldr }}</p>

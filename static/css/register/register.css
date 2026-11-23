@@ -1,2 +1,14 @@
 @import url('../login/login.css');
-.auth-card { border-top:3px solid #57534e; }
+
+.auth-card.auth-card {
+  background: #fffdf9;
+  border: 1px solid #e6ddd0;
+  border-top: 3px solid #9f1239;
+  box-shadow: 0 1px 3px rgba(68, 42, 28, 0.06);
+}
+
+.dark .auth-card.auth-card {
+  background: #191614;
+  border-color: #342c27;
+  border-top-color: #e11d48;
+}

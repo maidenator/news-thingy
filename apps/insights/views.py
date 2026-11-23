@@ -10,6 +10,19 @@ def _format_sql(queryset):
     return sqlparse.format(str(queryset.query), reindent=True, keyword_case='upper')
 
 
+def _attach_breakdown_percentages(items):
+    """Attach relative article share and summary coverage percentages for UI bars."""
+    max_articles = max((item.article_count for item in items), default=1) or 1
+    for item in items:
+        item.share_pct = round((item.article_count / max_articles) * 100)
+        item.coverage_pct = (
+            round((item.summary_count / item.article_count) * 100)
+            if item.article_count
+            else 0
+        )
+    return items
+
+
 @login_required
 def article_index(request):
     """
@@ -77,8 +90,11 @@ def outlet_breakdown(request):
         )
         .order_by('-article_count', 'name')
     )
+    generated_sql = _format_sql(outlets) if request.GET.get('sql') == '1' else None
+    outlet_list = _attach_breakdown_percentages(list(outlets))
+    category_list = _attach_breakdown_percentages(list(categories))
     return render(request, 'insights/outlet_breakdown.html', {
-        'outlets': outlets,
-        'categories': categories,
-        'generated_sql': _format_sql(outlets) if request.GET.get('sql') == '1' else None,
+        'outlets': outlet_list,
+        'categories': category_list,
+        'generated_sql': generated_sql,
     })

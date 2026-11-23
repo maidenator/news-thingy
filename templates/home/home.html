@@ -64,8 +64,8 @@
     {% for outlet in outlets %}
         <form method="post" action="{% url 'home:toggle_subscription' outlet.id %}">
             {% csrf_token %}
-            <button class="{% if outlet.id in subscribed_outlet_ids %}followed{% endif %}" type="submit">
-                {% if outlet.id in subscribed_outlet_ids %}✓{% else %}+{% endif %} {{ outlet.name }}
+            <button class="{% if outlet.id in subscribed_outlet_ids %}followed{% endif %}" type="submit" data-outlet="{{ outlet.slug }}">
+                <span class="outlet-dot" data-outlet="{{ outlet.slug }}"></span>{% if outlet.id in subscribed_outlet_ids %}✓{% else %}+{% endif %} {{ outlet.name }}
             </button>
         </form>
     {% endfor %}
@@ -73,9 +73,9 @@
 
 <section class="article-grid">
     {% for article in articles %}
-        <article>
+        <article class="{% if forloop.first and not search_query %}lead-story{% endif %}{% if article.id in user_read_ids %} is-read{% endif %}">
             <p class="meta">
-                {{ article.outlet.badge_label }} · {{ article.category.name }} · {{ article.published_at|timesince }} ago
+                <span class="outlet-dot" data-outlet="{{ article.outlet.slug }}"></span>{{ article.outlet.badge_label }} · {{ article.category.name }} · {{ article.published_at|timesince }} ago
                 {% if article.summary %}
                     · <span class="read-badge">{{ article.summary.summary_read_time_seconds }}s summary</span>
                 {% endif %}
@@ -102,13 +102,13 @@
                 <div class="article-action-buttons">
                     <form method="post" action="{% url 'home:toggle_read' article.id %}" class="bookmark-form">
                         {% csrf_token %}
-                        <button type="submit" class="bookmark-btn {% if article.id in user_read_ids %}bookmarked{% endif %}" title="{% if article.id in user_read_ids %}Mark unread{% else %}Mark as read{% endif %}">
+                        <button type="submit" class="status-btn read-btn {% if article.id in user_read_ids %}is-active{% endif %}" title="{% if article.id in user_read_ids %}Mark unread{% else %}Mark as read{% endif %}">
                             {% if article.id in user_read_ids %}✓ Read{% else %}Mark read{% endif %}
                         </button>
                     </form>
                     <form method="post" action="{% url 'home:toggle_bookmark' article.id %}" class="bookmark-form">
                         {% csrf_token %}
-                        <button type="submit" class="bookmark-btn {% if article.id in user_bookmarked_ids %}bookmarked{% endif %}" title="{% if article.id in user_bookmarked_ids %}Remove bookmark{% else %}Bookmark story{% endif %}">
+                        <button type="submit" class="status-btn save-btn {% if article.id in user_bookmarked_ids %}is-active{% endif %}" title="{% if article.id in user_bookmarked_ids %}Remove bookmark{% else %}Bookmark story{% endif %}">
                             {% if article.id in user_bookmarked_ids %}★ Saved{% else %}☆ Save{% endif %}
                         </button>
                     </form>

@@ -2,23 +2,23 @@
 {% block title %}Newsroom & Topic Breakdown{% endblock %}
 {% block content %}
 <section class="mb-6">
-    <p class="font-sans text-xs uppercase tracking-widest text-stone-500 dark:text-stone-400">Database feature · GROUP BY &amp; AGGREGATION</p>
+    <p class="font-sans text-xs font-semibold uppercase tracking-widest text-[#9f1239] dark:text-[#fb7185]">Database feature · GROUP BY &amp; AGGREGATION</p>
     <div class="flex flex-wrap items-center justify-between gap-3 mt-1">
-        <h2 class="font-serif-headline text-3xl font-bold text-stone-950 dark:text-stone-50">Newsroom &amp; Topic Breakdown</h2>
+        <h2 class="font-serif-headline text-3xl font-bold text-[#1c1917] dark:text-[#f5efe6]">Newsroom &amp; Topic Breakdown</h2>
         {% if generated_sql %}
-        <a href="{% url 'insights:outlet_breakdown' %}" class="font-sans text-xs font-semibold uppercase tracking-wider text-stone-700 dark:text-stone-300 border-b border-stone-300 dark:border-stone-700 hover:text-stone-950 dark:hover:text-stone-50 transition">Hide generated SQL</a>
+        <a href="{% url 'insights:outlet_breakdown' %}" class="inline-flex items-center px-3 py-1 rounded-full border border-[#9f1239] dark:border-[#e11d48] bg-[#9f1239] dark:bg-[#be123c] font-sans text-xs font-semibold uppercase tracking-wider text-white hover:bg-[#881337] dark:hover:bg-[#e11d48] transition">Hide generated SQL</a>
         {% else %}
-        <a href="{% url 'insights:outlet_breakdown' %}?sql=1" class="font-sans text-xs font-semibold uppercase tracking-wider text-stone-700 dark:text-stone-300 border-b border-stone-300 dark:border-stone-700 hover:text-stone-950 dark:hover:text-stone-50 transition">Show generated SQL</a>
+        <a href="{% url 'insights:outlet_breakdown' %}?sql=1" class="inline-flex items-center px-3 py-1 rounded-full border border-[#fecdd3] dark:border-[#881337] bg-[#fff1f2] dark:bg-[#9f1239]/20 font-sans text-xs font-semibold uppercase tracking-wider text-[#9f1239] dark:text-[#fb7185] hover:bg-[#ffe4e6] dark:hover:bg-[#9f1239]/35 transition">Show generated SQL</a>
         {% endif %}
     </div>
-    <p class="text-sm text-stone-600 dark:text-stone-400 mt-2 max-w-2xl">
+    <p class="text-sm text-[#6b5e53] dark:text-[#a89d92] mt-2 max-w-2xl">
         Article volume, AI summary coverage, and average original read length aggregated across newsrooms and topic sections.
     </p>
 </section>
 
-<div class="overflow-x-auto border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950 mb-8">
+<div class="overflow-x-auto rounded-md border border-[#e6ddd0] dark:border-[#342c27] bg-[#fffdf9] dark:bg-[#191614] shadow-[0_1px_3px_rgba(68,42,28,0.06)] dark:shadow-none mb-8">
     <table class="min-w-full text-sm font-sans">
-        <thead class="bg-stone-100 dark:bg-stone-900 text-left text-xs uppercase tracking-wider text-stone-600 dark:text-stone-400">
+        <thead class="bg-[#f5efe6] dark:bg-[#231e1b] text-left text-xs uppercase tracking-wider text-[#6b5e53] dark:text-[#a89d92]">
             <tr>
                 <th class="px-4 py-3 font-semibold">Newsroom</th>
                 <th class="px-4 py-3 font-semibold">Primary Beat</th>
@@ -27,23 +27,37 @@
                 <th class="px-4 py-3 font-semibold text-right">Avg Read Time</th>
             </tr>
         </thead>
-        <tbody class="divide-y divide-stone-200 dark:divide-stone-800">
+        <tbody class="divide-y divide-[#e6ddd0] dark:divide-[#342c27]">
             {% for outlet in outlets %}
-            <tr class="hover:bg-stone-50 dark:hover:bg-stone-900/60 transition">
+            <tr class="hover:bg-[#f5efe6]/60 dark:hover:bg-[#231e1b]/60 transition">
                 <td class="px-4 py-3">
-                    <span class="font-serif-headline text-base font-semibold text-stone-900 dark:text-stone-100">{{ outlet.name }}</span>
-                    <span class="ml-2 text-xs uppercase tracking-wider text-stone-500 dark:text-stone-400">{{ outlet.badge_label }}</span>
+                    <span class="inline-block w-2 h-2 rounded-full mr-1.5 align-middle outlet-dot" data-outlet="{{ outlet.slug }}"></span>
+                    <span class="font-serif-headline text-base font-semibold text-[#1c1917] dark:text-[#f5efe6]">{{ outlet.name }}</span>
+                    <span class="ml-2 text-xs uppercase tracking-wider text-[#6b5e53] dark:text-[#a89d92]">{{ outlet.badge_label }}</span>
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-stone-700 dark:text-stone-300">{{ outlet.category.name }}</td>
-                <td class="px-4 py-3 text-right font-semibold text-stone-900 dark:text-stone-100">{{ outlet.article_count }}</td>
-                <td class="px-4 py-3 text-right text-stone-700 dark:text-stone-300">{{ outlet.summary_count }}</td>
-                <td class="px-4 py-3 text-right text-stone-600 dark:text-stone-400">
+                <td class="px-4 py-3 whitespace-nowrap text-[#6b5e53] dark:text-[#a89d92]">{{ outlet.category.name }}</td>
+                <td class="px-4 py-3 text-right">
+                    <div class="font-semibold text-[#1c1917] dark:text-[#f5efe6]">{{ outlet.article_count }}</div>
+                    <div class="mt-1 ml-auto h-1.5 w-20 rounded-full bg-[#f5efe6] dark:bg-[#231e1b] overflow-hidden" title="{{ outlet.share_pct }}% of top newsroom">
+                        <div class="h-full rounded-full bg-[#9f1239] dark:bg-[#e11d48]" style="width: {{ outlet.share_pct }}%"></div>
+                    </div>
+                </td>
+                <td class="px-4 py-3 text-right">
+                    <div class="text-[#1c1917] dark:text-[#f5efe6]">
+                        {{ outlet.summary_count }}
+                        <span class="ml-1 text-xs text-[#6b5e53] dark:text-[#a89d92]">({{ outlet.coverage_pct }}%)</span>
+                    </div>
+                    <div class="mt-1 ml-auto h-1.5 w-20 rounded-full bg-[#f5efe6] dark:bg-[#231e1b] overflow-hidden" title="{{ outlet.coverage_pct }}% summary coverage">
+                        <div class="h-full rounded-full bg-[#059669] dark:bg-[#10b981]" style="width: {{ outlet.coverage_pct }}%"></div>
+                    </div>
+                </td>
+                <td class="px-4 py-3 text-right text-[#6b5e53] dark:text-[#a89d92]">
                     {% if outlet.avg_read_minutes %}{{ outlet.avg_read_minutes|floatformat:1 }} min{% else %}—{% endif %}
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5" class="px-4 py-8 text-center text-stone-500 dark:text-stone-400">
+                <td colspan="5" class="px-4 py-8 text-center text-[#6b5e53] dark:text-[#a89d92]">
                     No outlets seeded yet.
                 </td>
             </tr>
@@ -53,22 +67,35 @@
 </div>
 
 <section class="mb-4">
-    <h3 class="font-serif-headline text-xl font-bold text-stone-950 dark:text-stone-50 mb-3">Coverage by Topic Category</h3>
-    <div class="overflow-x-auto border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950">
+    <h3 class="font-serif-headline text-xl font-bold text-[#1c1917] dark:text-[#f5efe6] mb-3">Coverage by Topic Category</h3>
+    <div class="overflow-x-auto rounded-md border border-[#e6ddd0] dark:border-[#342c27] bg-[#fffdf9] dark:bg-[#191614] shadow-[0_1px_3px_rgba(68,42,28,0.06)] dark:shadow-none">
         <table class="min-w-full text-sm font-sans">
-            <thead class="bg-stone-100 dark:bg-stone-900 text-left text-xs uppercase tracking-wider text-stone-600 dark:text-stone-400">
+            <thead class="bg-[#f5efe6] dark:bg-[#231e1b] text-left text-xs uppercase tracking-wider text-[#6b5e53] dark:text-[#a89d92]">
                 <tr>
                     <th class="px-4 py-3 font-semibold">Category</th>
                     <th class="px-4 py-3 font-semibold text-right">Articles</th>
                     <th class="px-4 py-3 font-semibold text-right">Summarized</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-stone-200 dark:divide-stone-800">
+            <tbody class="divide-y divide-[#e6ddd0] dark:divide-[#342c27]">
                 {% for category in categories %}
-                <tr class="hover:bg-stone-50 dark:hover:bg-stone-900/60 transition">
-                    <td class="px-4 py-3 font-medium text-stone-900 dark:text-stone-100">{{ category.name }}</td>
-                    <td class="px-4 py-3 text-right font-semibold text-stone-900 dark:text-stone-100">{{ category.article_count }}</td>
-                    <td class="px-4 py-3 text-right text-stone-700 dark:text-stone-300">{{ category.summary_count }}</td>
+                <tr class="hover:bg-[#f5efe6]/60 dark:hover:bg-[#231e1b]/60 transition">
+                    <td class="px-4 py-3 font-medium text-[#1c1917] dark:text-[#f5efe6]">{{ category.name }}</td>
+                    <td class="px-4 py-3 text-right">
+                        <div class="font-semibold text-[#1c1917] dark:text-[#f5efe6]">{{ category.article_count }}</div>
+                        <div class="mt-1 ml-auto h-1.5 w-20 rounded-full bg-[#f5efe6] dark:bg-[#231e1b] overflow-hidden" title="{{ category.share_pct }}% of top category">
+                            <div class="h-full rounded-full bg-[#9f1239] dark:bg-[#e11d48]" style="width: {{ category.share_pct }}%"></div>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3 text-right">
+                        <div class="text-[#1c1917] dark:text-[#f5efe6]">
+                            {{ category.summary_count }}
+                            <span class="ml-1 text-xs text-[#6b5e53] dark:text-[#a89d92]">({{ category.coverage_pct }}%)</span>
+                        </div>
+                        <div class="mt-1 ml-auto h-1.5 w-20 rounded-full bg-[#f5efe6] dark:bg-[#231e1b] overflow-hidden" title="{{ category.coverage_pct }}% summary coverage">
+                            <div class="h-full rounded-full bg-[#059669] dark:bg-[#10b981]" style="width: {{ category.coverage_pct }}%"></div>
+                        </div>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -77,11 +104,11 @@
 </section>
 
 {% if generated_sql %}
-<details class="mt-6 border border-stone-300 dark:border-stone-700 bg-stone-50 dark:bg-stone-900/60 p-4" open>
-    <summary class="cursor-pointer font-sans text-xs font-semibold uppercase tracking-wider text-stone-700 dark:text-stone-300">
+<details class="mt-6 rounded-md border border-[#fecdd3] dark:border-[#881337] bg-[#fff1f2]/50 dark:bg-[#231e1b] p-4" open>
+    <summary class="cursor-pointer font-sans text-xs font-semibold uppercase tracking-wider text-[#9f1239] dark:text-[#fb7185]">
         Generated SQL (GROUP BY · COUNT · AVG)
     </summary>
-    <pre class="mt-3 overflow-x-auto whitespace-pre-wrap break-words text-xs leading-relaxed text-stone-800 dark:text-stone-200"><code>{{ generated_sql }}</code></pre>
+    <pre class="mt-3 overflow-x-auto whitespace-pre-wrap break-words text-xs leading-relaxed text-[#1c1917] dark:text-[#f5efe6]"><code>{{ generated_sql }}</code></pre>
 </details>
 {% endif %}
 {% endblock %}

@@ -31,19 +31,19 @@
                 extend: {
                     colors: {
                         paper: {
-                            DEFAULT: '#fbfbfa',
-                            dark: '#0d0e11',
-                            cardDark: '#14161a',
-                            subtleDark: '#1a1d23',
-                            borderDark: '#262930'
+                            DEFAULT: '#faf6f0',
+                            dark: '#110f0e',
+                            cardDark: '#191614',
+                            subtleDark: '#231e1b',
+                            borderDark: '#342c27'
                         },
                         ink: {
-                            900: '#111827',
-                            800: '#1f2937',
-                            700: '#374151',
-                            500: '#6b7280',
-                            400: '#9ca3af',
-                            100: '#f3f4f6'
+                            900: '#1c1917',
+                            800: '#292524',
+                            700: '#44403c',
+                            500: '#6b5e53',
+                            400: '#a89d92',
+                            100: '#f5efe6'
                         }
                     },
                     fontFamily: {
@@ -66,45 +66,51 @@
             font-family: 'Helvetica Neue', Arial, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
         .newspaper-rule {
-            border-top: 1px solid #111827;
-            border-bottom: 1px solid #111827;
+            border-top: 1px solid #9f1239;
+            border-bottom: 1px solid #9f1239;
             height: 3px;
         }
         .dark .newspaper-rule {
-            border-top: 1px solid #e4e4e7;
-            border-bottom: 1px solid #e4e4e7;
+            border-top: 1px solid #e11d48;
+            border-bottom: 1px solid #e11d48;
         }
+        .outlet-dot[data-outlet="rappler"] { background-color: #ea580c; }
+        .outlet-dot[data-outlet="inquirer"] { background-color: #1d4ed8; }
+        .outlet-dot[data-outlet="businessworld"] { background-color: #b45309; }
+        .outlet-dot[data-outlet="gma-news"] { background-color: #dc2626; }
+        .outlet-dot[data-outlet="philstar"] { background-color: #0f766e; }
+        .outlet-dot[data-outlet="abs-cbn"] { background-color: #9f1239; }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
-<body class="flex flex-col min-h-full antialiased bg-[#fbfbfa] dark:bg-[#0d0e11] text-stone-900 dark:text-stone-100 transition-colors duration-200 selection:bg-stone-200 dark:selection:bg-stone-700 selection:text-black dark:selection:text-white">
+<body class="flex flex-col min-h-full antialiased bg-[#faf6f0] dark:bg-[#110f0e] text-[#1c1917] dark:text-[#f5efe6] transition-colors duration-200 selection:bg-[#fff1f2] dark:selection:bg-[#9f1239]/40 selection:text-[#9f1239] dark:selection:text-[#fda4af]">
 
     <!-- Top Paper Header & Masthead -->
-    <header class="border-b border-stone-200 dark:border-stone-800 bg-[#fbfbfa] dark:bg-[#0d0e11] transition-colors duration-200">
+    <header class="border-b border-[#e6ddd0] dark:border-[#342c27] bg-[#faf6f0] dark:bg-[#110f0e] transition-colors duration-200">
         
         <!-- Top Header Bar -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-2 flex flex-col sm:flex-row justify-between items-center text-xs text-stone-500 dark:text-stone-400 font-sans border-b border-stone-200 dark:border-stone-800 gap-2 sm:gap-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-2 flex flex-col sm:flex-row justify-between items-center text-xs text-[#6b5e53] dark:text-[#a89d92] font-sans border-b border-[#e6ddd0] dark:border-[#342c27] gap-2 sm:gap-0">
             <div class="flex items-center space-x-3">
-                <span class="font-medium text-stone-700 dark:text-stone-300">{% now "l, F j, Y" %}</span>
-                <span class="text-stone-300 dark:text-stone-700">•</span>
+                <span class="font-medium text-[#1c1917] dark:text-[#f5efe6]">{% now "l, F j, Y" %}</span>
+                <span class="text-[#d6c8b8] dark:text-[#342c27]">•</span>
                 <span>Metro Manila Edition</span>
-                <span class="text-stone-300 dark:text-stone-700">•</span>
+                <span class="text-[#d6c8b8] dark:text-[#342c27]">•</span>
                 <span>Philippine News Summaries</span>
             </div>
             <div class="flex items-center space-x-4">
                 {% if user.is_authenticated %}
-                    <span class="text-stone-800 dark:text-stone-200">Signed in as <strong>{{ user.username }}</strong></span>
+                    <span class="text-[#1c1917] dark:text-[#f5efe6]">Signed in as <strong>{{ user.username }}</strong></span>
                 {% endif %}
 
-                <!-- shadcn/ui Black & White Theme Toggle Button -->
-                <button type="button" id="theme-toggle" class="inline-flex items-center justify-center gap-1.5 h-8 w-24 shrink-0 rounded-md border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950 text-stone-900 dark:text-stone-100 hover:bg-stone-100 dark:hover:bg-stone-900 hover:text-stone-900 dark:hover:text-stone-100 shadow-xs text-xs font-medium font-sans transition-colors select-none cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-stone-400 active:scale-100" aria-label="Toggle display theme">
-                    <!-- Monochrome Lucide Sun (visible in dark mode) -->
-                    <svg id="theme-icon-sun" class="h-3.5 w-3.5 hidden dark:block shrink-0 text-stone-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Warm Editorial Theme Toggle Button -->
+                <button type="button" id="theme-toggle" class="inline-flex items-center justify-center gap-1.5 h-8 w-24 shrink-0 rounded-md border border-[#e6ddd0] dark:border-[#342c27] bg-[#fffdf9] dark:bg-[#191614] text-[#1c1917] dark:text-[#f5efe6] hover:bg-[#f5efe6] dark:hover:bg-[#231e1b] shadow-xs text-xs font-medium font-sans transition-colors select-none cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#9f1239] active:scale-100" aria-label="Toggle display theme">
+                    <!-- Lucide Sun (visible in dark mode) -->
+                    <svg id="theme-icon-sun" class="h-3.5 w-3.5 hidden dark:block shrink-0 text-[#f5efe6]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="4"></circle>
                         <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
                     </svg>
-                    <!-- Monochrome Lucide Moon (visible in light mode) -->
-                    <svg id="theme-icon-moon" class="h-3.5 w-3.5 block dark:hidden shrink-0 text-stone-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <!-- Lucide Moon (visible in light mode) -->
+                    <svg id="theme-icon-moon" class="h-3.5 w-3.5 block dark:hidden shrink-0 text-[#1c1917]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
                     </svg>
                     <span id="theme-toggle-text" class="w-10 text-left font-sans text-xs">Light</span>
@@ -115,10 +121,10 @@
         <!-- Classic Newspaper Masthead -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center">
             <a href="{% url 'home:home' %}" class="inline-block group">
-                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-stone-950 dark:text-stone-50 font-serif-headline group-hover:text-stone-700 dark:group-hover:text-stone-300 transition">
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#1c1917] dark:text-[#f5efe6] font-serif-headline group-hover:text-[#9f1239] dark:group-hover:text-[#fda4af] transition">
                     NEWS THINGY
                 </h1>
-                <p class="text-xs sm:text-sm text-stone-600 dark:text-stone-400 italic font-serif mt-1">
+                <p class="text-xs sm:text-sm text-[#6b5e53] dark:text-[#a89d92] italic font-serif mt-1">
                     AI-powered summaries of current news from Philippine publishers
                 </p>
             </a>
@@ -134,32 +140,32 @@
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs font-semibold font-sans">
                 
                 <!-- Section Links -->
-                <nav class="flex items-center space-x-5 sm:space-x-7 overflow-x-auto py-1 scrollbar-none text-stone-700 dark:text-stone-300">
-                    <a href="{% url 'home:home' %}" class="hover:text-black dark:hover:text-white border-b-2 {% if not request.GET.category and not request.GET.saved and not request.GET.q and request.resolver_match.app_name != 'insights' %}border-stone-950 dark:border-stone-100 text-stone-950 dark:text-stone-100{% else %}border-transparent{% endif %} pb-1 transition">
+                <nav class="flex items-center space-x-5 sm:space-x-7 overflow-x-auto py-1 scrollbar-none text-[#6b5e53] dark:text-[#a89d92]">
+                    <a href="{% url 'home:home' %}" class="hover:text-[#9f1239] dark:hover:text-[#fda4af] border-b-2 {% if not request.GET.category and not request.GET.saved and not request.GET.q and request.resolver_match.app_name != 'insights' %}border-[#9f1239] dark:border-[#fb7185] text-[#9f1239] dark:text-[#fda4af]{% else %}border-transparent{% endif %} pb-1 transition whitespace-nowrap">
                         Front Page
                     </a>
-                    <a href="{% url 'home:home' %}?saved=1" class="hover:text-black dark:hover:text-white border-b-2 {% if request.GET.saved == '1' %}border-stone-950 dark:border-stone-100 text-stone-950 dark:text-stone-100{% else %}border-transparent{% endif %} pb-1 transition">
+                    <a href="{% url 'home:home' %}?saved=1" class="hover:text-[#9f1239] dark:hover:text-[#fda4af] border-b-2 {% if request.GET.saved == '1' %}border-[#9f1239] dark:border-[#fb7185] text-[#9f1239] dark:text-[#fda4af]{% else %}border-transparent{% endif %} pb-1 transition whitespace-nowrap">
                         ★ Saved Stories
                     </a>
-                    <a href="{% url 'insights:article_index' %}" class="hover:text-black dark:hover:text-white border-b-2 {% if request.resolver_match.url_name == 'article_index' %}border-stone-950 dark:border-stone-100 text-stone-950 dark:text-stone-100{% else %}border-transparent{% endif %} pb-1 transition">
+                    <a href="{% url 'insights:article_index' %}" class="hover:text-[#9f1239] dark:hover:text-[#fda4af] border-b-2 {% if request.resolver_match.url_name == 'article_index' %}border-[#9f1239] dark:border-[#fb7185] text-[#9f1239] dark:text-[#fda4af]{% else %}border-transparent{% endif %} pb-1 transition whitespace-nowrap">
                         Article Index
                     </a>
-                    <a href="{% url 'insights:summarized_articles' %}" class="hover:text-black dark:hover:text-white border-b-2 {% if request.resolver_match.url_name == 'summarized_articles' %}border-stone-950 dark:border-stone-100 text-stone-950 dark:text-stone-100{% else %}border-transparent{% endif %} pb-1 transition">
+                    <a href="{% url 'insights:summarized_articles' %}" class="hover:text-[#9f1239] dark:hover:text-[#fda4af] border-b-2 {% if request.resolver_match.url_name == 'summarized_articles' %}border-[#9f1239] dark:border-[#fb7185] text-[#9f1239] dark:text-[#fda4af]{% else %}border-transparent{% endif %} pb-1 transition whitespace-nowrap">
                         AI Summaries
                     </a>
-                    <a href="{% url 'insights:outlet_breakdown' %}" class="hover:text-black dark:hover:text-white border-b-2 {% if request.resolver_match.url_name == 'outlet_breakdown' %}border-stone-950 dark:border-stone-100 text-stone-950 dark:text-stone-100{% else %}border-transparent{% endif %} pb-1 transition">
+                    <a href="{% url 'insights:outlet_breakdown' %}" class="hover:text-[#9f1239] dark:hover:text-[#fda4af] border-b-2 {% if request.resolver_match.url_name == 'outlet_breakdown' %}border-[#9f1239] dark:border-[#fb7185] text-[#9f1239] dark:text-[#fda4af]{% else %}border-transparent{% endif %} pb-1 transition whitespace-nowrap">
                         Newsroom Stats
                     </a>
-                    <a href="{% url 'home:home' %}?category=nation-governance" class="hover:text-black dark:hover:text-white border-b-2 {% if request.GET.category == 'nation-governance' %}border-stone-950 dark:border-stone-100 text-stone-950 dark:text-stone-100{% else %}border-transparent{% endif %} pb-1 transition">
+                    <a href="{% url 'home:home' %}?category=nation-governance" class="hover:text-[#9f1239] dark:hover:text-[#fda4af] border-b-2 {% if request.GET.category == 'nation-governance' %}border-[#9f1239] dark:border-[#fb7185] text-[#9f1239] dark:text-[#fda4af]{% else %}border-transparent{% endif %} pb-1 transition whitespace-nowrap">
                         Nation & Governance
                     </a>
-                    <a href="{% url 'home:home' %}?category=business-economy" class="hover:text-black dark:hover:text-white border-b-2 {% if request.GET.category == 'business-economy' %}border-stone-950 dark:border-stone-100 text-stone-950 dark:text-stone-100{% else %}border-transparent{% endif %} pb-1 transition">
+                    <a href="{% url 'home:home' %}?category=business-economy" class="hover:text-[#9f1239] dark:hover:text-[#fda4af] border-b-2 {% if request.GET.category == 'business-economy' %}border-[#9f1239] dark:border-[#fb7185] text-[#9f1239] dark:text-[#fda4af]{% else %}border-transparent{% endif %} pb-1 transition whitespace-nowrap">
                         Business & Economy
                     </a>
-                    <a href="{% url 'home:home' %}?category=technology-startups" class="hover:text-black dark:hover:text-white border-b-2 {% if request.GET.category == 'technology-startups' %}border-stone-950 dark:border-stone-100 text-stone-950 dark:text-stone-100{% else %}border-transparent{% endif %} pb-1 transition">
+                    <a href="{% url 'home:home' %}?category=technology-startups" class="hover:text-[#9f1239] dark:hover:text-[#fda4af] border-b-2 {% if request.GET.category == 'technology-startups' %}border-[#9f1239] dark:border-[#fb7185] text-[#9f1239] dark:text-[#fda4af]{% else %}border-transparent{% endif %} pb-1 transition whitespace-nowrap">
                         Technology & Startups
                     </a>
-                    <a href="{% url 'home:home' %}?category=climate-environment" class="hover:text-black dark:hover:text-white border-b-2 {% if request.GET.category == 'climate-environment' %}border-stone-950 dark:border-stone-100 text-stone-950 dark:text-stone-100{% else %}border-transparent{% endif %} pb-1 transition">
+                    <a href="{% url 'home:home' %}?category=climate-environment" class="hover:text-[#9f1239] dark:hover:text-[#fda4af] border-b-2 {% if request.GET.category == 'climate-environment' %}border-[#9f1239] dark:border-[#fb7185] text-[#9f1239] dark:text-[#fda4af]{% else %}border-transparent{% endif %} pb-1 transition whitespace-nowrap">
                         Climate & Environment
                     </a>
                 </nav>
@@ -167,19 +173,19 @@
                 <!-- Auth Navigation -->
                 <div class="flex items-center space-x-3 shrink-0 font-medium">
                     {% if user.is_authenticated %}
-                        <a href="{% url 'profile:profile' %}" class="hover:text-black dark:hover:text-white transition">Profile</a>
-                        <a href="{% url 'user_settings:settings' %}" class="hover:text-black dark:hover:text-white transition">Settings</a>
+                        <a href="{% url 'profile:profile' %}" class="text-[#6b5e53] dark:text-[#a89d92] hover:text-[#9f1239] dark:hover:text-[#fda4af] transition">Profile</a>
+                        <a href="{% url 'user_settings:settings' %}" class="text-[#6b5e53] dark:text-[#a89d92] hover:text-[#9f1239] dark:hover:text-[#fda4af] transition">Settings</a>
                         <form method="POST" action="{% url 'login:logout' %}" class="inline">
                             {% csrf_token %}
-                            <button type="submit" class="text-stone-600 dark:text-stone-300 hover:text-stone-950 dark:hover:text-white transition border border-stone-300 dark:border-stone-700 px-3 py-1 rounded bg-white dark:bg-stone-900 hover:bg-stone-50 dark:hover:bg-stone-800 text-xs font-sans cursor-pointer">
+                            <button type="submit" class="text-[#6b5e53] dark:text-[#a89d92] hover:text-[#1c1917] dark:hover:text-[#f5efe6] transition border border-[#d6c8b8] dark:border-[#342c27] px-3 py-1 rounded bg-[#fffdf9] dark:bg-[#191614] hover:bg-[#f5efe6] dark:hover:bg-[#231e1b] text-xs font-sans cursor-pointer">
                                 Log Out
                             </button>
                         </form>
                     {% else %}
-                        <a href="{% url 'login:login' %}" class="text-stone-700 dark:text-stone-300 hover:text-black dark:hover:text-white transition px-2 py-1">
+                        <a href="{% url 'login:login' %}" class="text-[#6b5e53] dark:text-[#a89d92] hover:text-[#9f1239] dark:hover:text-[#fda4af] transition px-2 py-1">
                             Log In
                         </a>
-                        <a href="{% url 'register:register' %}" class="bg-stone-900 dark:bg-stone-100 hover:bg-stone-800 dark:hover:bg-white text-white dark:text-stone-950 px-3 py-1 rounded transition text-xs">
+                        <a href="{% url 'register:register' %}" class="bg-[#9f1239] hover:bg-[#881337] dark:bg-[#be123c] dark:hover:bg-[#e11d48] text-white px-3 py-1 rounded transition text-xs">
                             Sign Up
                         </a>
                     {% endif %}
@@ -187,14 +193,14 @@
             </div>
         </div>
 
-        <div class="border-b border-stone-200 dark:border-stone-800"></div>
+        <div class="border-b border-[#e6ddd0] dark:border-[#342c27]"></div>
     </header>
 
     <!-- Flash Messages -->
     {% if messages %}
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 w-full">
             {% for message in messages %}
-                <div class="p-3 mb-2 rounded border text-xs flex items-center justify-between font-sans {% if message.tags == 'error' %}bg-rose-50 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800 text-rose-900 dark:text-rose-200{% elif message.tags == 'success' %}bg-stone-100 dark:bg-stone-800/80 border-stone-400 dark:border-stone-600 text-stone-900 dark:text-stone-100{% else %}bg-stone-50 dark:bg-stone-900/60 border-stone-300 dark:border-stone-700 text-stone-800 dark:text-stone-200{% endif %}">
+                <div class="p-3 mb-2 rounded border text-xs flex items-center justify-between font-sans {% if message.tags == 'error' %}bg-rose-50 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800 text-rose-900 dark:text-rose-200{% elif message.tags == 'success' %}bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200{% else %}bg-amber-50 dark:bg-amber-950/30 border-amber-300 dark:border-amber-800 text-amber-900 dark:text-amber-200{% endif %}">
                     <div>{{ message }}</div>
                 </div>
             {% endfor %}
@@ -207,30 +213,30 @@
     </main>
 
     <!-- Editorial Footer -->
-    <footer class="border-t-2 border-stone-900 dark:border-stone-100 bg-[#fbfbfa] dark:bg-[#0d0e11] mt-16 py-12 transition-colors duration-200 font-sans">
+    <footer class="border-t border-[#e6ddd0] dark:border-[#342c27] bg-[#faf6f0] dark:bg-[#110f0e] mt-16 py-12 transition-colors duration-200 font-sans">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 text-xs text-stone-600 dark:text-stone-400">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 text-xs text-[#6b5e53] dark:text-[#a89d92]">
                 <div class="space-y-2 md:col-span-2">
-                    <h3 class="font-serif-headline text-lg font-bold text-stone-900 dark:text-stone-100">NEWS THINGY</h3>
-                    <p class="text-stone-600 dark:text-stone-400 max-w-md leading-relaxed">
+                    <h3 class="font-serif-headline text-lg font-bold text-[#1c1917] dark:text-[#f5efe6]">NEWS THINGY</h3>
+                    <p class="text-[#6b5e53] dark:text-[#a89d92] max-w-md leading-relaxed">
                         A service that summarizes news articles from major Philippine news outlets. Each summary includes key points and a direct link to the original story for full details.
                     </p>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-stone-900 dark:text-stone-200 mb-2 text-xs">Editorial Standards</h4>
-                    <p class="leading-relaxed text-stone-500 dark:text-stone-400">
+                    <h4 class="font-semibold text-[#1c1917] dark:text-[#f5efe6] mb-2 text-xs">Editorial Standards</h4>
+                    <p class="leading-relaxed text-[#6b5e53] dark:text-[#a89d92]">
                         Summaries are produced with LLM assistance and are prone to making mistakes. Readers can consult the attached original articles for complete reporting.
                     </p>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-stone-900 dark:text-stone-200 mb-2 text-xs">Sources</h4>
-                    <p class="leading-relaxed text-stone-500 dark:text-stone-400">
+                    <h4 class="font-semibold text-[#1c1917] dark:text-[#f5efe6] mb-2 text-xs">Sources</h4>
+                    <p class="leading-relaxed text-[#6b5e53] dark:text-[#a89d92]">
                         Rappler, Philippine Daily Inquirer, BusinessWorld, GMA News Online, Philstar Global, and ABS-CBN News.
                     </p>
                 </div>
             </div>
 
-            <div class="pt-6 border-t border-stone-200 dark:border-stone-800 flex flex-col sm:flex-row justify-between items-center text-xs text-stone-500 dark:text-stone-400 gap-2 sm:gap-0">
+            <div class="pt-6 border-t border-[#e6ddd0] dark:border-[#342c27] flex flex-col sm:flex-row justify-between items-center text-xs text-[#6b5e53] dark:text-[#a89d92] gap-2 sm:gap-0">
                 <span>&copy; 2026 News Thingy. All rights reserved.</span>
                 <span>Original journalism belongs to the respective news organizations.</span>
             </div>

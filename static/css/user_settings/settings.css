@@ -1,2 +1,52 @@
 @import url('../profile/profile.css');
-.toggle { display:grid !important; grid-template-columns:auto 1fr; gap:.6rem; align-items:center; padding:1rem 0; border-bottom:1px solid #e7e5e4; }.toggle span { font-size:.9rem; text-transform:none; letter-spacing:0; }.toggle small { grid-column:2; color:#78716c; font-weight:400; text-transform:none; letter-spacing:0; }.dark .toggle { border-color:#292524; }
+
+.toggle {
+  display: grid !important;
+  grid-template-columns: auto 1fr;
+  gap: .6rem;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid #e6ddd0;
+  color: #1c1917;
+  cursor: pointer;
+}
+
+.toggle input[type="checkbox"] {
+  accent-color: #9f1239;
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+}
+
+.toggle span {
+  font-size: .9rem;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  color: #1c1917;
+}
+
+.toggle small {
+  grid-column: 2;
+  color: #6b5e53;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.dark .toggle {
+  border-color: #342c27;
+  color: #f5efe6;
+}
+
+.dark .toggle input[type="checkbox"] {
+  accent-color: #e11d48;
+}
+
+.dark .toggle span {
+  color: #f5efe6;
+}
+
+.dark .toggle small {
+  color: #a89d92;
+}
