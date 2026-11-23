@@ -2,7 +2,19 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.http import url_has_allowed_host_and_scheme
 from news.models import Article, Category, Outlet, UserSubscription
+
+
+def _redirect_back(request, fallback):
+    referer = request.META.get('HTTP_REFERER')
+    if referer and url_has_allowed_host_and_scheme(
+        referer,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        return redirect(referer)
+    return redirect(fallback)
 
 
 @login_required
@@ -55,7 +67,7 @@ def toggle_bookmark_view(request, article_id):
         else:
             article.bookmarked_by.add(request.user)
             messages.success(request, f'Saved "{article.title}" to your bookmarks.')
-    return redirect(request.META.get('HTTP_REFERER', 'home:home'))
+    return _redirect_back(request, 'home:home')
 
 
 @login_required
@@ -67,4 +79,4 @@ def toggle_subscription_view(request, outlet_id):
             subscription.outlets.remove(outlet); messages.info(request, f'Unfollowed {outlet.name}.')
         else:
             subscription.outlets.add(outlet); messages.success(request, f'Now following {outlet.name}.')
-    return redirect(request.META.get('HTTP_REFERER', 'home:home'))
+    return _redirect_back(request, 'home:home')

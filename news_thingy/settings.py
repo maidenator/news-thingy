@@ -97,12 +97,17 @@ LOGOUT_REDIRECT_URL = 'login:login'
 
 # Supabase PostgreSQL is used whenever DATABASE_URL is supplied in .env. The
 # SQLite fallback keeps the project runnable until a Supabase project is ready.
+DATABASE_URL = os.environ.get('DATABASE_URL', '').strip()
+if not DATABASE_URL:
+    # Treat an empty .env value as "not configured" so the SQLite fallback works.
+    os.environ.pop('DATABASE_URL', None)
+
 DATABASES = {
     'default': dj_database_url.config(
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
         conn_max_age=600,
         conn_health_checks=True,
-        ssl_require=bool(os.environ.get('DATABASE_URL')),
+        ssl_require=DATABASE_URL.lower().startswith(('postgres://', 'postgresql://')),
     )
 }
 

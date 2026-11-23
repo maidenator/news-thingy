@@ -66,13 +66,17 @@
                 {% endif %}
             </p>
             <h3>{{ article.title }}</h3>
-            <p>{{ article.summary.tldr }}</p>
-            {% if article.summary.key_takeaways %}
-                <ul>
-                    {% for takeaway in article.summary.key_takeaways|slice:':2' %}
-                        <li>{{ takeaway }}</li>
-                    {% endfor %}
-                </ul>
+            {% if article.summary %}
+                <p>{{ article.summary.tldr }}</p>
+                {% if article.summary.key_takeaways %}
+                    <ul>
+                        {% for takeaway in article.summary.key_takeaways|slice:':2' %}
+                            <li>{{ takeaway }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% else %}
+                <p>Summary pending. Read the original report for full details.</p>
             {% endif %}
             <div class="article-actions">
                 <a href="{{ article.url }}" target="_blank" rel="noopener">Read original reporting →</a>

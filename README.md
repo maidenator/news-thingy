@@ -179,4 +179,4 @@ Visit **`http://127.0.0.1:8000/`** in your browser.
 ```powershell
 .\.venv\Scripts\python manage.py test
 ```
-All 31 tests cover registration, auto-onboarding, login, logout, category filtering, summary calculations, outlet subscription toggles, bookmarks, the JOIN implementation, and the SUBQUERY implementation.
+All 32 tests cover registration, auto-onboarding, login, logout, category filtering, summary calculations, outlet subscription toggles, bookmarks, articles without summaries, the JOIN implementation, and the SUBQUERY implementation.

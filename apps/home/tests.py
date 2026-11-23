@@ -66,6 +66,20 @@ class HomeSearchAndFilterTests(TestCase):
         self.assertContains(response, 'AI Startup Secures Seed Funding in Manila')
         self.assertContains(response, 'Central Bank Keeps Benchmark Rates Unchanged')
 
+    def test_home_includes_articles_without_summaries(self):
+        Article.objects.create(
+            outlet=self.outlet_inq,
+            category=self.category_tech,
+            title='Breaking Story Awaiting Summary',
+            url='https://example.com/breaking-no-summary',
+            published_at=timezone.now(),
+        )
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('home:home'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Breaking Story Awaiting Summary')
+        self.assertContains(response, 'Summary pending')
+
     def test_search_by_title_query(self):
         self.client.force_login(self.user)
         response = self.client.get(reverse('home:home'), {'q': 'Startup'})

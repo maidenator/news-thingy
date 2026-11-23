@@ -69,7 +69,7 @@ class AuthenticationSliceTests(TestCase):
 
     def test_login_post_success_and_transition_to_home(self):
         """Successful login transitions to home screen."""
-        user = User.objects.create_user(
+        User.objects.create_user(
             username=self.user_data['username'],
             email=self.user_data['email'],
             password=self.user_data['password']

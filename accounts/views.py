@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib import messages
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.http import require_POST
 from .forms import CustomUserCreationForm, CustomLoginForm
 
 
@@ -48,8 +50,14 @@ def login_view(request):
             user = form.get_user()
             auth_login(request, user)
             messages.success(request, f"Welcome back, {user.username}!")
-            next_url = request.GET.get('next') or 'core:home'
-            return redirect(next_url)
+            next_url = request.GET.get('next')
+            if next_url and url_has_allowed_host_and_scheme(
+                next_url,
+                allowed_hosts={request.get_host()},
+                require_https=request.is_secure(),
+            ):
+                return redirect(next_url)
+            return redirect('core:home')
         else:
             messages.error(request, "Invalid username or password. Please try again.")
     else:
@@ -58,6 +66,7 @@ def login_view(request):
     return render(request, 'accounts/login.html', {'form': form})
 
 
+@require_POST
 def logout_view(request):
     """Handles user logout and redirects to login screen."""
     if request.user.is_authenticated:

@@ -99,15 +99,18 @@
                             <span class="hidden md:inline text-stone-600 dark:text-stone-400">By {{ lead.author }}</span>
                         {% endif %}
                     </div>
+                    {% if lead.summary %}
                     <div class="text-stone-500 dark:text-stone-400 text-[11px]">
                         ~{{ lead.summary.summary_read_time_seconds }}s read
                     </div>
+                    {% endif %}
                 </div>
 
                 <h3 class="text-2xl sm:text-3xl font-bold font-serif-headline text-stone-950 dark:text-stone-50 leading-tight mb-4">
                     {{ lead.title }}
                 </h3>
 
+                {% if lead.summary %}
                 <!-- Summary Paragraph -->
                 <p class="text-sm sm:text-base text-stone-800 dark:text-stone-300 leading-relaxed font-serif mb-5">
                     {{ lead.summary.tldr }}
@@ -125,12 +128,19 @@
                         {% endfor %}
                     </ul>
                 </div>
+                {% else %}
+                <p class="text-sm sm:text-base text-stone-800 dark:text-stone-300 leading-relaxed font-serif mb-5">
+                    Summary pending. Read the original report for full details.
+                </p>
+                {% endif %}
 
                 <!-- Footer with Source Link & Disclaimer -->
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-4 border-t border-stone-200 dark:border-stone-800 text-xs gap-3">
                     <div class="flex items-center space-x-2 text-stone-500 dark:text-stone-400 font-sans-meta text-[11px]">
+                        {% if lead.summary %}
                         <span>AI summary ({{ lead.summary.ai_model }})</span>
                         <span>•</span>
+                        {% endif %}
                         <span>Verify details in original story</span>
                     </div>
                     <div>
@@ -160,18 +170,26 @@
                                         <span class="text-stone-400 dark:text-stone-600">•</span>
                                         <span class="text-stone-500 dark:text-stone-400 text-[11px]">{{ article.published_at|timesince }} ago</span>
                                     </div>
+                                    {% if article.summary %}
                                     <span class="text-stone-400 dark:text-stone-500 text-[10px] font-sans-meta">
                                         ~{{ article.summary.summary_read_time_seconds }}s read
                                     </span>
+                                    {% endif %}
                                 </div>
 
                                 <h4 class="text-lg font-bold font-serif-headline text-stone-950 dark:text-stone-50 leading-snug mb-3">
                                     {{ article.title }}
                                 </h4>
 
+                                {% if article.summary %}
                                 <p class="text-xs sm:text-sm text-stone-700 dark:text-stone-300 leading-relaxed font-serif mb-4">
                                     {{ article.summary.tldr }}
                                 </p>
+                                {% else %}
+                                <p class="text-xs sm:text-sm text-stone-700 dark:text-stone-300 leading-relaxed font-serif mb-4">
+                                    Summary pending. Read the original report for full details.
+                                </p>
+                                {% endif %}
 
                                 {% if article.summary.key_takeaways %}
                                     <div class="bg-stone-50 dark:bg-[#1a1d23] rounded p-3 mb-4 text-xs text-stone-600 dark:text-stone-300 border border-stone-100 dark:border-stone-800">

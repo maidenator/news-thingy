@@ -1,8 +1,19 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.db.models import Sum
+from django.utils.http import url_has_allowed_host_and_scheme
 from news.models import Category, Outlet, Article, UserSubscription
+
+
+def _redirect_back(request, fallback):
+    referer = request.META.get('HTTP_REFERER')
+    if referer and url_has_allowed_host_and_scheme(
+        referer,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        return redirect(referer)
+    return redirect(fallback)
 
 
 @login_required(login_url='accounts:login')
@@ -70,4 +81,4 @@ def toggle_subscription_view(request, outlet_id):
             subscription.outlets.add(outlet)
             messages.success(request, f"Now following {outlet.name}.")
 
-    return redirect(request.META.get('HTTP_REFERER', 'core:home'))
+    return _redirect_back(request, 'core:home')
