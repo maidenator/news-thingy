@@ -23,12 +23,16 @@ def home_view(request):
     active_category = request.GET.get('category', 'all')
     search_query = request.GET.get('q', '').strip()
     saved_only = request.GET.get('saved') == '1'
+    following_only = request.GET.get('following') == '1'
+    subscribed_outlet_ids = set(subscription.outlets.values_list('id', flat=True))
 
     articles = Article.objects.select_related('outlet', 'category', 'summary').all()
     if active_category != 'all':
         articles = articles.filter(category__slug=active_category)
     if saved_only:
         articles = articles.filter(bookmarked_by=request.user)
+    if following_only:
+        articles = articles.filter(outlet_id__in=subscribed_outlet_ids)
     if search_query:
         articles = articles.filter(
             Q(title__icontains=search_query) |
@@ -42,10 +46,11 @@ def home_view(request):
 
     return render(request, 'home/home.html', {
         'subscription': subscription,
-        'subscribed_outlet_ids': set(subscription.outlets.values_list('id', flat=True)),
+        'subscribed_outlet_ids': subscribed_outlet_ids,
         'user_bookmarked_ids': user_bookmarked_ids,
         'saved_count': saved_count,
         'saved_only': saved_only,
+        'following_only': following_only,
         'categories': Category.objects.all(),
         'outlets': Outlet.objects.all(),
         'articles': articles,

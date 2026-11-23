@@ -28,4 +28,5 @@ db.sqlite3-journal
 # Submissions & Evidence
 *_FINAL_PROJECT/
 *.zip
+archive_*/
 

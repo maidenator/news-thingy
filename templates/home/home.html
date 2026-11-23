@@ -28,19 +28,26 @@
             {% if active_category and active_category != 'all' %}
                 <input type="hidden" name="category" value="{{ active_category }}">
             {% endif %}
+            {% if following_only %}
+                <input type="hidden" name="following" value="1">
+            {% endif %}
+            {% if saved_only %}
+                <input type="hidden" name="saved" value="1">
+            {% endif %}
             <button type="submit" class="search-button">Search</button>
             {% if search_query %}
-                <a href="{% url 'home:home' %}{% if active_category and active_category != 'all' %}?category={{ active_category }}{% endif %}" class="search-clear">Clear</a>
+                <a href="{% url 'home:home' %}{% if active_category and active_category != 'all' %}?category={{ active_category }}{% elif following_only %}?following=1{% elif saved_only %}?saved=1{% endif %}" class="search-clear">Clear</a>
             {% endif %}
         </div>
     </form>
 </section>
 
 <nav class="filters">
-    <a href="{% url 'home:home' %}{% if search_query %}?q={{ search_query }}{% endif %}" class="{% if active_category == 'all' and not saved_only %}active{% endif %}">All topics</a>
+    <a href="{% url 'home:home' %}{% if search_query %}?q={{ search_query }}{% endif %}" class="{% if active_category == 'all' and not saved_only and not following_only %}active{% endif %}">All topics</a>
+    <a href="?following=1{% if search_query %}&q={{ search_query }}{% endif %}" class="{% if following_only %}active{% endif %}">Following ({{ user_outlets_count }})</a>
     <a href="?saved=1{% if search_query %}&q={{ search_query }}{% endif %}" class="{% if saved_only %}active{% endif %}">★ Saved ({{ saved_count }})</a>
     {% for category in categories %}
-        <a href="?category={{ category.slug }}{% if search_query %}&q={{ search_query }}{% endif %}" class="{% if active_category == category.slug and not saved_only %}active{% endif %}">{{ category.name }}</a>
+        <a href="?category={{ category.slug }}{% if search_query %}&q={{ search_query }}{% endif %}{% if following_only %}&following=1{% endif %}" class="{% if active_category == category.slug and not saved_only %}active{% endif %}">{{ category.name }}</a>
     {% endfor %}
 </nav>
 

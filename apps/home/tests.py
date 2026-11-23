@@ -122,3 +122,19 @@ class HomeSearchAndFilterTests(TestCase):
         self.assertEqual(response_off.status_code, 302)
         self.assertFalse(self.article1.bookmarked_by.filter(id=self.user.id).exists())
 
+    def test_following_only_filter(self):
+        self.client.force_login(self.user)
+        # Before following any outlet, ?following=1 returns no stories
+        empty_response = self.client.get(reverse('home:home'), {'following': '1'})
+        self.assertEqual(empty_response.status_code, 200)
+        self.assertNotContains(empty_response, 'AI Startup Secures Seed Funding in Manila')
+        self.assertContains(empty_response, 'Following (0)')
+
+        # Follow Daily Inquirer via toggle endpoint
+        self.client.post(reverse('home:toggle_subscription', args=[self.outlet_inq.id]))
+        filtered_response = self.client.get(reverse('home:home'), {'following': '1'})
+        self.assertEqual(filtered_response.status_code, 200)
+        self.assertContains(filtered_response, 'AI Startup Secures Seed Funding in Manila')
+        self.assertNotContains(filtered_response, 'Central Bank Keeps Benchmark Rates Unchanged')
+        self.assertContains(filtered_response, 'Following (1)')
+
