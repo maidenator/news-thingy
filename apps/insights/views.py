@@ -1,8 +1,13 @@
 from django.contrib.auth.decorators import login_required
 from django.db.models import Avg, Count, Subquery
 from django.shortcuts import render
+import sqlparse
 
 from news.models import Article, Category, Outlet, Summary
+
+
+def _format_sql(queryset):
+    return sqlparse.format(str(queryset.query), reindent=True, keyword_case='upper')
 
 
 @login_required
@@ -22,7 +27,7 @@ def article_index(request):
 
     return render(request, 'insights/article_index.html', {
         'articles': articles,
-        'generated_sql': str(articles.query) if request.GET.get('sql') == '1' else None,
+        'generated_sql': _format_sql(articles) if request.GET.get('sql') == '1' else None,
     })
 
 
@@ -45,7 +50,7 @@ def summarized_articles(request):
 
     return render(request, 'insights/summarized_articles.html', {
         'articles': articles,
-        'generated_sql': str(articles.query) if request.GET.get('sql') == '1' else None,
+        'generated_sql': _format_sql(articles) if request.GET.get('sql') == '1' else None,
     })
 
 
@@ -75,5 +80,5 @@ def outlet_breakdown(request):
     return render(request, 'insights/outlet_breakdown.html', {
         'outlets': outlets,
         'categories': categories,
-        'generated_sql': str(outlets.query) if request.GET.get('sql') == '1' else None,
+        'generated_sql': _format_sql(outlets) if request.GET.get('sql') == '1' else None,
     })

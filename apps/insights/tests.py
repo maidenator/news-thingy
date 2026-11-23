@@ -82,7 +82,8 @@ class InsightsQueryTests(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(reverse('insights:summarized_articles'), {'sql': '1'})
         sql = response.context['generated_sql']
-        self.assertIn('IN (SELECT', sql.upper())
+        self.assertIn('\n', sql)
+        self.assertIn('IN (SELECT', ' '.join(sql.upper().split()))
         self.assertIn('news_summary', sql)
         self.assertContains(response, 'Hide generated SQL')
 
