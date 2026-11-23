@@ -45,14 +45,14 @@ The active application screens are organized as feature slices under `apps/`:
 apps/login/          # login behavior and URL configuration
 apps/register/       # registration behavior and URL configuration
 apps/home/           # authenticated briefing and source subscriptions
-apps/insights/       # JOIN and SUBQUERY database feature screens
+apps/insights/       # JOIN, SUBQUERY, and newsroom aggregation screens
 apps/profile/        # Profile model, form, screen, and migration
 apps/user_settings/  # UserSettings model, form, screen, and migration
 templates/<feature>/
 static/css/<feature>/  static/js/<feature>/  static/images/<feature>/
 ```
 
-The legacy `accounts`, `core`, and `news` modules remain for the custom user model, the existing news domain, and backward-compatible routes. The user-facing routes are `/login/`, `/register/`, `/`, `/profile/`, `/settings/`, `/insights/articles/`, and `/insights/summaries/`.
+The legacy `accounts`, `core`, and `news` modules remain for the custom user model, the existing news domain, and backward-compatible routes. The user-facing routes are `/login/`, `/register/`, `/`, `/profile/`, `/settings/`, `/insights/articles/`, `/insights/summaries/`, and `/insights/breakdown/`.
 
 ### Connect Supabase
 
@@ -179,4 +179,4 @@ Visit **`http://127.0.0.1:8000/`** in your browser.
 ```powershell
 .\.venv\Scripts\python manage.py test
 ```
-All 32 tests cover registration, auto-onboarding, login, logout, category filtering, summary calculations, outlet subscription toggles, bookmarks, articles without summaries, the JOIN implementation, and the SUBQUERY implementation.
+All 45 tests cover registration, auto-onboarding, login, logout, category filtering, summary calculations, outlet subscription toggles, bookmarks, read tracking, articles without summaries, the JOIN implementation, the SUBQUERY implementation, and the newsroom aggregation page.
