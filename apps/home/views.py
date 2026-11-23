@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from news.models import Article, Category, Outlet, UserSubscription
+from news.services import fetch_all_outlets
 
 
 def _redirect_back(request, fallback):
@@ -114,6 +115,22 @@ def toggle_bookmark_view(request, article_id):
         else:
             article.bookmarked_by.add(request.user)
             messages.success(request, f'Saved "{article.title}" to your bookmarks.')
+    return _redirect_back(request, 'home:home')
+
+
+@login_required
+def fetch_latest_news_view(request):
+    if request.method == 'POST':
+        result = fetch_all_outlets(limit_per_outlet=2, timeout=8)
+        if result['created'] > 0:
+            messages.success(
+                request,
+                f"Fetched {result['created']} new stor{'y' if result['created'] == 1 else 'ies'} from {result['checked']} newsroom(s).",
+            )
+        elif result['errors'] and result['checked'] == len(result['errors']):
+            messages.warning(request, 'Could not reach RSS feeds right now. Showing saved articles.')
+        else:
+            messages.info(request, 'Your briefing is already up to date with the latest RSS dispatches.')
     return _redirect_back(request, 'home:home')
 
 

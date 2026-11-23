@@ -189,3 +189,12 @@ class HomeSearchAndFilterTests(TestCase):
         self.assertEqual(res_off.status_code, 302)
         self.assertFalse(self.article1.read_by.filter(id=self.user.id).exists())
 
+    def test_fetch_latest_news_view_posts_and_flashes_summary(self):
+        from unittest.mock import patch
+
+        self.client.force_login(self.user)
+        with patch('apps.home.views.fetch_all_outlets', return_value={'created': 3, 'checked': 2, 'errors': []}):
+            response = self.client.post(reverse('home:fetch_latest'), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Fetched 3 new stories from 2 newsroom(s).')
+

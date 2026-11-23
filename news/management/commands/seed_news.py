@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 from datetime import timedelta
 from news.models import Category, Outlet, Article, Summary, UserSubscription
+from news.services import DEFAULT_RSS_FEEDS
 
 
 class Command(BaseCommand):
@@ -101,6 +102,7 @@ class Command(BaseCommand):
                 slug=odata["slug"],
                 category=odata["category"],
                 website_url=odata["website_url"],
+                rss_feed_url=DEFAULT_RSS_FEEDS.get(odata["slug"], ""),
                 badge_label=odata["badge_label"]
             )
             outlets[out.slug] = out
