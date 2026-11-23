@@ -7,9 +7,13 @@
 </div>
 
 <article class="article-detail">
-    <p class="meta">
-        <span class="outlet-dot" data-outlet="{{ article.outlet.slug }}"></span>{{ article.outlet.badge_label }} · {{ article.outlet.name }} · {{ article.category.name }} · {{ article.published_at|date:"M j, Y · H:i" }}
-    </p>
+    <div class="card-source-bar detail-source-bar">
+        <span class="outlet-pill" data-outlet="{{ article.outlet.slug }}">
+            <span class="outlet-dot" data-outlet="{{ article.outlet.slug }}"></span>{{ article.outlet.name }}
+        </span>
+        <time class="pub-date" datetime="{{ article.published_at|date:'c' }}">Published {{ article.published_at|date:"F j, Y · g:i A" }}</time>
+        <span class="meta">{{ article.category.name }}</span>
+    </div>
     <h1>{{ article.title }}</h1>
     <p class="detail-author">By {{ article.author|default:"Editorial Desk" }}</p>
 

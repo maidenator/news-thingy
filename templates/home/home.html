@@ -61,9 +61,15 @@
         {% if lead_story %}
             <article class="lead-feature-card{% if lead_story.id in user_read_ids %} is-read{% endif %}">
                 <div class="lead-kicker-row">
-                    <span class="lead-badge">Lead Story · {{ lead_story.editorial_reason }}</span>
+                    <div class="source-date-strip">
+                        <span class="lead-badge">Lead Story · {{ lead_story.editorial_reason }}</span>
+                        <span class="outlet-pill" data-outlet="{{ lead_story.outlet.slug }}">
+                            <span class="outlet-dot" data-outlet="{{ lead_story.outlet.slug }}"></span>{{ lead_story.outlet.name }}
+                        </span>
+                        <time class="pub-date" datetime="{{ lead_story.published_at|date:'c' }}">{{ lead_story.published_at|date:"M j, Y · g:i A" }}</time>
+                    </div>
                     <p class="meta">
-                        <span class="outlet-dot" data-outlet="{{ lead_story.outlet.slug }}"></span>{{ lead_story.outlet.badge_label }} · {{ lead_story.category.name }} · {{ lead_story.published_at|timesince }} ago
+                        {{ lead_story.category.name }} · {{ lead_story.published_at|timesince }} ago
                         {% if lead_story.summary %}
                             · <span class="read-badge">{{ lead_story.summary.summary_read_time_seconds }}s summary</span>
                         {% endif %}
@@ -128,8 +134,14 @@
                                     <img src="{{ article.image_url }}" alt="{{ article.title }}" class="article-thumb" loading="lazy" onerror="this.parentElement.style.display='none'">
                                 </a>
                             {% endif %}
+                            <div class="card-source-bar">
+                                <span class="outlet-pill" data-outlet="{{ article.outlet.slug }}">
+                                    <span class="outlet-dot" data-outlet="{{ article.outlet.slug }}"></span>{{ article.outlet.name }}
+                                </span>
+                                <time class="pub-date" datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|date:"M j, Y · g:i A" }}</time>
+                            </div>
                             <p class="meta">
-                                <span class="outlet-dot" data-outlet="{{ article.outlet.slug }}"></span>{{ article.outlet.badge_label }} · {{ article.category.name }} · {{ article.published_at|timesince }} ago
+                                {{ article.category.name }} · {{ article.published_at|timesince }} ago
                                 {% if article.summary %}
                                     · <span class="read-badge">{{ article.summary.summary_read_time_seconds }}s summary</span>
                                 {% endif %}
@@ -181,9 +193,13 @@
                     {% for article in more_stories %}
                         <article class="more-row{% if article.id in user_read_ids %} is-read{% endif %}">
                             <div class="more-row-body">
-                                <p class="meta">
-                                    <span class="outlet-dot" data-outlet="{{ article.outlet.slug }}"></span>{{ article.outlet.badge_label }} · {{ article.category.name }} · {{ article.published_at|timesince }} ago
-                                </p>
+                                <div class="card-source-bar">
+                                    <span class="outlet-pill" data-outlet="{{ article.outlet.slug }}">
+                                        <span class="outlet-dot" data-outlet="{{ article.outlet.slug }}"></span>{{ article.outlet.name }}
+                                    </span>
+                                    <time class="pub-date" datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|date:"M j, Y · g:i A" }}</time>
+                                    <span class="meta">{{ article.category.name }}</span>
+                                </div>
                                 <h3><a href="{% url 'home:article_detail' article.id %}" class="article-title-link">{{ article.title }}</a></h3>
                                 {% if article.summary %}
                                     <p class="more-excerpt">{{ article.summary.tldr }}</p>
@@ -250,11 +266,12 @@
                 {% for item in latest_happenings %}
                     <li class="wire-item{% if item.id in user_read_ids %} is-read{% endif %}">
                         <div class="wire-item-body">
-                            <p class="wire-meta">
-                                <span class="wire-time">{{ item.published_at|timesince }} ago</span>
-                                <span aria-hidden="true">·</span>
-                                <span class="outlet-dot" data-outlet="{{ item.outlet.slug }}"></span>{{ item.outlet.badge_label }}
-                            </p>
+                            <div class="wire-meta">
+                                <span class="outlet-pill outlet-pill-sm" data-outlet="{{ item.outlet.slug }}">
+                                    <span class="outlet-dot" data-outlet="{{ item.outlet.slug }}"></span>{{ item.outlet.name }}
+                                </span>
+                                <time class="wire-date" datetime="{{ item.published_at|date:'c' }}">{{ item.published_at|date:"M j · g:i A" }}</time>
+                            </div>
                             <a href="{% url 'home:article_detail' item.id %}" class="wire-headline">{{ item.title }}</a>
                         </div>
                         {% if item.image_url %}
